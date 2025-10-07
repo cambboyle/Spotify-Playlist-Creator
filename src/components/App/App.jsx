@@ -40,14 +40,14 @@ function App() {
     })();
   }, []);
 
-  const addTrack = useCallback(
-    (track) => {
-      if (playlistTracks.some((savedTrack) => savedTrack.id === track.id))
-        return;
-      setPlaylistTracks((prevTracks) => [...prevTracks, track]);
-    },
-    [playlistTracks]
-  );
+  const addTrack = useCallback((track) => {
+    setPlaylistTracks((prevTracks) => {
+      if (prevTracks.some((savedTrack) => savedTrack.id === track.id)) {
+        return prevTracks;
+      }
+      return [...prevTracks, track];
+    });
+  }, []);
 
   const removeTrack = useCallback((track) => {
     setPlaylistTracks((prevTracks) =>
