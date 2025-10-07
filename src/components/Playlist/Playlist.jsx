@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import Tracklist from "../TrackList/Tracklist";
 
 const Playlist = (props) => {
-  const { onNameChange } = props;
+  const { onNameChange, isLoading } = props;
 
   const handleNameChange = useCallback(
     (event) => {
@@ -21,9 +21,13 @@ const Playlist = (props) => {
       <button
         className="playlist-save"
         onClick={props.onSave}
-        disabled={!props.playlistTracks || props.playlistTracks.length === 0}
+        disabled={
+          isLoading ||
+          !props.playlistTracks ||
+          props.playlistTracks.length === 0
+        }
       >
-        Save to Spotify
+        {isLoading ? "Saving..." : "Save to Spotify"}
       </button>
     </div>
   );

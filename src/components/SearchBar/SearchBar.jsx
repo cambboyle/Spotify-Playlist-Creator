@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 
 const SearchBar = (props) => {
+  const { isLoading } = props;
   const [term, setTerm] = useState("");
   const debounceRef = useRef(null);
 
@@ -26,14 +27,21 @@ const SearchBar = (props) => {
 
   return (
     <form onSubmit={handleSearch}>
+      <label htmlFor="search-input" className="visually-hidden">
+        Search
+      </label>
       <input
+        id="search-input"
         type="search"
         placeholder="Search for a track"
         value={term}
         onChange={handleChange}
         aria-label="Search"
+        disabled={isLoading}
       />
-      <button type="submit">Search</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Loading..." : "Search"}
+      </button>
     </form>
   );
 };

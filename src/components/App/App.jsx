@@ -11,15 +11,22 @@ function App() {
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [userDisplayName, setUserDisplayName] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Search using Spotify API
   const search = useCallback(async (term) => {
     if (!term) return;
+    setError(null);
+    setIsLoading(true);
     try {
       const results = await Spotify.search(term);
       setSearchResults(results);
     } catch (err) {
       console.error("Search failed", err);
+      setError("Search failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -30,12 +37,29 @@ function App() {
         const token = await Spotify.getAccessToken();
         setIsConnected(!!token);
         if (token) {
-          const profile = await Spotify.getCurrentUser();
-          if (profile && profile.display_name)
-            setUserDisplayName(profile.display_name);
+          setIsLoading(true);
+          try {
+            const profile = await Spotify.getCurrentUser();
+            if (profile && profile.display_name)
+              setUserDisplayName(profile.display_name);
+          } catch (err) {
+            // Detect private/forbidden profile access and display a clearer error
+            if (err && err.code === 403) {
+              setError(
+                "Spotify profile access is restricted. If your account is private or has restricted visibility, make your profile visible or adjust privacy settings."
+              );
+            } else {
+              console.error("Failed to get profile", err);
+              setError("Failed to load Spotify profile.");
+            }
+          } finally {
+            setIsLoading(false);
+          }
         }
       } catch (err) {
         console.error("Failed to parse access token", err);
+        setError("Failed to connect to Spotify.");
+        setIsLoading(false);
       }
     })();
   }, []);
@@ -60,11 +84,19 @@ function App() {
   }, []);
 
   const savePlaylist = useCallback(() => {
+    setError(null);
+    setIsLoading(true);
     const trackUris = playlistTracks.map((track) => track.uri);
-    Spotify.savePlaylist(playlistName, trackUris).then(() => {
-      setPlaylistName("New Playlist");
-      setPlaylistTracks([]);
-    });
+    Spotify.savePlaylist(playlistName, trackUris)
+      .then(() => {
+        setPlaylistName("New Playlist");
+        setPlaylistTracks([]);
+      })
+      .catch((err) => {
+        console.error("Save playlist failed", err);
+        setError("Failed to save playlist.");
+      })
+      .finally(() => setIsLoading(false));
   }, [playlistName, playlistTracks]);
 
   return (
@@ -95,6 +127,11 @@ function App() {
             </button>
           )}
         </div>
+        {error && (
+          <div className="App-error" role="alert">
+            {error}
+          </div>
+        )}
         <div className="App-playlist">
           <SearchResults searchResults={searchResults} onAdd={addTrack} />
           <Playlist
@@ -103,6 +140,7 @@ function App() {
             onNameChange={updatePlaylistName}
             onRemove={removeTrack}
             onSave={savePlaylist}
+            isLoading={isLoading}
           />
         </div>
       </div>

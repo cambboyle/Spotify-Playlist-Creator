@@ -275,7 +275,18 @@ const Spotify = {
     const resp = await fetch("https://api.spotify.com/v1/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      // If the API forbids access to the profile (e.g., account restrictions/privacy),
+      // surface a specific error the app can detect and display a helpful message.
+      if (resp.status === 403) {
+        const text = await resp.text();
+        const err = new Error("Access to Spotify profile is forbidden");
+        err.code = 403;
+        err.body = text;
+        throw err;
+      }
+      return null;
+    }
     return resp.json();
   },
 
