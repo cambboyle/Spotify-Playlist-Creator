@@ -1,11 +1,20 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 
 const SearchBar = (props) => {
   const [term, setTerm] = useState("");
+  const debounceRef = useRef(null);
 
-  const handleChange = useCallback((e) => {
-    setTerm(e.target.value);
-  }, []);
+  const handleChange = useCallback(
+    (e) => {
+      const value = e.target.value;
+      setTerm(value);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        if (props.onSearch) props.onSearch(value.trim());
+      }, 400);
+    },
+    [props]
+  );
 
   const handleSearch = useCallback(
     (e) => {
