@@ -4,13 +4,89 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Spotify Playlist Creator
 
-## React Compiler
+A small React + Vite app that lets you search Spotify tracks and create playlists using the Spotify Web API.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project implements the client-side implicit grant OAuth flow to obtain a short-lived access token that allows creating playlists on behalf of the authenticated user.
 
-## Expanding the ESLint configuration
+## What this repo contains
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- A minimal React app (Vite) with components to search tracks and manage a playlist.
+- `src/components/util/Spotify.js` — client helper that handles OAuth and calls to the Spotify Web API.
+- No styling: CSS files have been intentionally left empty so you can add your own styles.
+
+## Quick start
+
+1. Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/cambboyle/Spotify-Playlist-Creator.git
+cd jamming
+npm install
+```
+
+2. Register a Spotify application
+
+- Go to https://developer.spotify.com/dashboard/applications and create an app.
+- Spotify sometimes rejects `http://localhost` redirect URIs for security. If that happens, use a secure (https) public URL from a tunneling service such as ngrok, localtunnel, or Cloudflare Tunnel and add that URL as the Redirect URI in the app settings.
+- Examples:
+  - `https://my-ngrok-subdomain.ngrok.io/`
+  - `https://random-ttl-123.localtunnel.app/`
+  - `https://<your-cloudflare-tunnel>.trycloudflare.com/`
+- Copy the Client ID.
+
+3. Create a `.env` file in the project root by copying `.env.example` and filling the values:
+
+```bash
+cp .env.example .env
+# then edit .env and fill VITE_SPOTIFY_CLIENT_ID and optionally VITE_SPOTIFY_REDIRECT_URI
+```
+
+Do NOT commit `.env` — it may contain sensitive values. `.env.example` is safe to commit and documents required variables.
+
+Vite exposes env variables prefixed with `VITE_` to the client. Do not commit your `.env`.
+
+4. Run the app
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000 in your browser. The app includes a "Connect to Spotify" button — use that to authorize the client. When you approve, Spotify will redirect back with an access token.
+
+## How OAuth works here (Authorization Code Flow with PKCE)
+
+Spotify deprecated the implicit grant flow. This app uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange), which is the recommended method for single-page applications.
+
+High level:
+
+- The client generates a random `code_verifier` and derives a `code_challenge` from it.
+- The app redirects the user to Spotify's authorization endpoint with `response_type=code` and includes the `code_challenge`.
+- After approval, Spotify redirects back with an authorization code (query parameter).
+- The client exchanges that code together with the original `code_verifier` for access and refresh tokens via Spotify's token endpoint.
+- Access tokens are stored in `sessionStorage`; refresh tokens (when provided) are used to obtain new access tokens when they expire.
+
+Notes:
+
+- This implementation does the code exchange from the browser over HTTPS. For stronger security and to persist refresh tokens longer-term, consider a small backend to handle token exchange and storage.
+- Use the "Connect to Spotify" button in the UI to initiate authorization. After approving, you'll be redirected back and the app will exchange the code automatically.
+
+## Files you may want to change
+
+- `src/components/util/Spotify.js` — OAuth scopes and implementation. The current scope includes `playlist-modify-public playlist-modify-private`.
+- `src/index.css` and `src/components/App/App.css` — intentionally empty for you to style.
+
+## Development notes
+
+- This app assumes the redirect URI is `http://localhost:3000/`. If you change ports or host, update `redirectUri` in `src/components/util/Spotify.js` and your Spotify app settings.
+- If `VITE_SPOTIFY_CLIENT_ID` is missing, the Spotify helper will throw a helpful error.
+
+## Troubleshooting
+
+- If you get redirected to Spotify but no token appears in the app, check the redirect URI configured in your Spotify application and ensure it exactly matches the app's URL (including trailing slash).
+- For CORS or network issues, confirm your dev server is running and you have an internet connection.
+
+## License
+
+MIT
