@@ -267,6 +267,28 @@ const Spotify = {
 
     return addResponse.json();
   },
+
+  // Return current user's profile (me)
+  async getCurrentUser() {
+    const token = await this.getAccessToken();
+    if (!token) return null;
+    const resp = await fetch("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!resp.ok) return null;
+    return resp.json();
+  },
+
+  // Clear stored tokens (client-side logout)
+  logout() {
+    accessToken = null;
+    refreshToken = null;
+    expiresAt = null;
+    sessionStorage.removeItem("spotify_access_token");
+    sessionStorage.removeItem("spotify_refresh_token");
+    sessionStorage.removeItem("spotify_expires_at");
+    sessionStorage.removeItem(STORAGE_KEY);
+  },
 };
 
 export default Spotify;

@@ -10,6 +10,7 @@ function App() {
   const [playlistName, setPlaylistName] = useState("New Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [userDisplayName, setUserDisplayName] = useState(null);
 
   // Search using Spotify API
   const search = useCallback(async (term) => {
@@ -28,6 +29,11 @@ function App() {
       try {
         const token = await Spotify.getAccessToken();
         setIsConnected(!!token);
+        if (token) {
+          const profile = await Spotify.getCurrentUser();
+          if (profile && profile.display_name)
+            setUserDisplayName(profile.display_name);
+        }
       } catch (err) {
         console.error("Failed to parse access token", err);
       }
@@ -70,18 +76,19 @@ function App() {
         <SearchBar onSearch={search} />
         <div>
           {isConnected ? (
-            <button
-              type="button"
-              onClick={() => {
-                // simple disconnect: remove stored tokens and update state
-                sessionStorage.removeItem("spotify_access_token");
-                sessionStorage.removeItem("spotify_refresh_token");
-                sessionStorage.removeItem("spotify_expires_at");
-                setIsConnected(false);
-              }}
-            >
-              Connected (Disconnect)
-            </button>
+            <div>
+              <div>Connected as {userDisplayName || "Spotify user"}</div>
+              <button
+                type="button"
+                onClick={() => {
+                  Spotify.logout();
+                  setUserDisplayName(null);
+                  setIsConnected(false);
+                }}
+              >
+                Disconnect
+              </button>
+            </div>
           ) : (
             <button type="button" onClick={() => Spotify.authorize()}>
               Connect to Spotify
