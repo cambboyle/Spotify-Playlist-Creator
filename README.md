@@ -36,16 +36,19 @@ npm install
   - `https://<your-cloudflare-tunnel>.trycloudflare.com/`
 - Copy the Client ID.
 
-3. Create a `.env` file in the project root by copying `.env.example` and filling the values:
+3. Create a `.env` file in the project root and fill the values. Example contents:
 
-```bash
-cp .env.example .env
-# then edit .env and fill VITE_SPOTIFY_CLIENT_ID and optionally VITE_SPOTIFY_REDIRECT_URI
+Create a file named `.env` (do NOT commit it) and add:
+
+```properties
+# Spotify Client ID from Spotify Developer Dashboard
+VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
+
+# Optional: override redirect URI (for public tunnels / deployed sites)
+VITE_SPOTIFY_REDIRECT_URI=http://localhost:3000/
 ```
 
-Do NOT commit `.env` — it may contain sensitive values. `.env.example` is safe to commit and documents required variables.
-
-Vite exposes env variables prefixed with `VITE_` to the client. Do not commit your `.env`.
+Do NOT commit `.env` — it may contain sensitive values. Vite exposes env variables prefixed with `VITE_` to the client, so keep secrets out of version control.
 
 4. Run the app
 
@@ -86,6 +89,35 @@ Notes:
 
 - If you get redirected to Spotify but no token appears in the app, check the redirect URI configured in your Spotify application and ensure it exactly matches the app's URL (including trailing slash).
 - For CORS or network issues, confirm your dev server is running and you have an internet connection.
+
+### Accidentally committed your .env?
+
+If you (or someone) accidentally committed a `.env` with secrets, remove it from the repository history as soon as possible.
+
+1. Remove the file and commit the change:
+
+```bash
+git rm --cached .env
+git commit -m "Remove .env from repository"
+```
+
+2. To purge it from history (this rewrites commits — only do this on personal branches or coordinate with your team):
+
+```bash
+# Using git filter-repo (recommended)
+git filter-repo --path .env --invert-paths
+
+# Or with BFG (simpler):
+# bfg --delete-files .env
+```
+
+3. Force-push the rewritten history to remote (only when you're sure):
+
+```bash
+git push --force
+```
+
+If you don't want to rewrite history, at minimum rotate the credentials (create a new Spotify client secret/ID) and delete the old one in the Spotify Dashboard.
 
 ## License
 
