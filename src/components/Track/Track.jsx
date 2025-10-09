@@ -26,6 +26,13 @@ const Track = (props) => {
     );
   };
 
+  const imageUrl =
+    track.image ||
+    (track.albumImages && track.albumImages[0]?.url) ||
+    (track.album && track.album.images && track.album.images[0]
+      ? track.album.images[0].url
+      : null);
+
   return (
     <div className="Track">
       <div className="Track-information">
@@ -33,7 +40,9 @@ const Track = (props) => {
         <p>
           {props.track.artist} | {props.track.album}
         </p>
-        <img src={props.track.album.images[0]} />
+        {imageUrl ? (
+          <img src={imageUrl} alt={`${track.name} album art`} />
+        ) : null}
       </div>
       {renderAction()}
     </div>
