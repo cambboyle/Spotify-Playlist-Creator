@@ -33,6 +33,7 @@ const Track = (props) => {
         <p>
           {props.track.artist} | {props.track.album}
         </p>
+        <img src={props.track.album.images[0]} />
       </div>
       {renderAction()}
     </div>
