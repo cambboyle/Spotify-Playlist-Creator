@@ -208,28 +208,35 @@ const Spotify = {
     const jsonResponse = await response.json();
     if (!jsonResponse.tracks) return [];
 
-    return jsonResponse.tracks.items.map((track) => ({
-      id: track.id,
-      name: track.name,
-      artist: track.artists && track.artists[0] ? track.artists[0].name : "",
-      album: track.album ? track.album.name : "",
-      albumImages: track.album && track.album.images ? track.album.images : [],
-      // choose image closest to 150px width inline (no helper)
-      image:
-        (track.album &&
-          track.album.images &&
-          track.album.images.length &&
-          // pick closest width to 150 using a single inline reduce
-          track.album.images.reduce(
-            (best, img) =>
-              Math.abs(img.width - 150) < Math.abs(best.width - 150)
-                ? img
-                : best,
-            track.album.images[0]
-          ).url) ||
-        null,
-      uri: track.uri,
-    }));
+    return jsonResponse.tracks.items.map((track) => {
+      const images =
+        track.album && track.album.images ? track.album.images : [];
+
+      // Spotify returns images in descending order (usually 640, 300, 64).
+      // Expose the three common sizes directly by index for simplicity.
+      const image640 = images[0] && images[0].url ? images[0].url : null;
+      const image300 = images[1] && images[1].url ? images[1].url : null;
+      const image64 = images[2] && images[2].url ? images[2].url : null;
+
+      return {
+        id: track.id,
+        name: track.name,
+        artist: track.artists && track.artists[0] ? track.artists[0].name : "",
+        album: track.album ? track.album.name : "",
+        albumImages: images,
+        image640,
+        image300,
+        image64,
+        // legacy `image` kept for compatibility; prefer image300 where possible
+        image:
+          image300 ||
+          image640 ||
+          image64 ||
+          (images[0] && images[0].url) ||
+          null,
+        uri: track.uri,
+      };
+    });
   },
 
   async savePlaylist(name, trackUris) {

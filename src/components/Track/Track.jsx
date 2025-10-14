@@ -9,7 +9,7 @@ const defaultTrack = {
   image: null,
   albumImages: [
     {
-      url: "https://placehold.co/150",
+      url: "https://placehold.co/300",
     },
   ],
 };
@@ -20,6 +20,7 @@ const Track = ({
   track = defaultTrack,
   isRemoval = false,
 }) => {
+  const safeTrack = track || defaultTrack;
   const addTrack = useCallback(() => {
     onAdd(track);
   }, [onAdd, track]);
@@ -44,21 +45,22 @@ const Track = ({
   };
 
   const imageUrl =
-    track?.image ||
-    track?.albumImages?.[0]?.url ||
-    (track?.album && track.album.images && track.album.images[0]
-      ? track.album.images[0].url
+    safeTrack?.image300 ||
+    safeTrack?.image ||
+    safeTrack?.albumImages?.[0]?.url ||
+    (safeTrack?.album && safeTrack.album.images && safeTrack.album.images[0]
+      ? safeTrack.album.images[0].url
       : null);
 
   return (
     <div className="Track">
       <div className="Track-information">
-        <h3>{track?.name}</h3>
+        <h3>{safeTrack?.name}</h3>
         <div className="Image-container">
           {imageUrl ? (
             <img
               src={imageUrl}
-              alt={`${track?.name} album art`}
+              alt={`${safeTrack?.name} album art`}
               className="Track-img"
             />
           ) : null}
@@ -66,7 +68,7 @@ const Track = ({
         </div>
 
         <p>
-          <strong>{track?.artist}</strong> <br /> {track?.album}
+          <strong>{safeTrack?.artist}</strong> <br /> {safeTrack?.album}
         </p>
       </div>
     </div>
