@@ -1,8 +1,25 @@
 import React, { useCallback } from "react";
+import "./Track.css";
 
-const Track = (props) => {
-  const { onAdd, onRemove, track, isRemoval } = props;
+const defaultTrack = {
+  id: "placeholder-1",
+  name: "Placeholder Track",
+  artist: "Placeholder Artist",
+  album: "Placeholder Album",
+  image: null,
+  albumImages: [
+    {
+      url: "https://placehold.co/150",
+    },
+  ],
+};
 
+const Track = ({
+  onAdd = () => {},
+  onRemove = () => {},
+  track = defaultTrack,
+  isRemoval = false,
+}) => {
   const addTrack = useCallback(() => {
     onAdd(track);
   }, [onAdd, track]);
@@ -27,21 +44,25 @@ const Track = (props) => {
   };
 
   const imageUrl =
-    track.image ||
-    (track.albumImages && track.albumImages[0]?.url) ||
-    (track.album && track.album.images && track.album.images[0]
+    track?.image ||
+    track?.albumImages?.[0]?.url ||
+    (track?.album && track.album.images && track.album.images[0]
       ? track.album.images[0].url
       : null);
 
   return (
     <div className="Track">
       <div className="Track-information">
-        <h3>{props.track.name}</h3>
+        <h3>{track?.name}</h3>
         <p>
-          {props.track.artist} | {props.track.album}
+          <strong>{track?.artist}</strong> | {track?.album}
         </p>
         {imageUrl ? (
-          <img src={imageUrl} alt={`${track.name} album art`} />
+          <img
+            src={imageUrl}
+            alt={`${track?.name} album art`}
+            className="Track-img"
+          />
         ) : null}
       </div>
       {renderAction()}

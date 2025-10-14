@@ -4,6 +4,7 @@ import Playlist from "../Playlist/Playlist";
 import SearchBar from "../SearchBar/SearchBar";
 import SearchResults from "../SearchResults/SearchResults";
 import Spotify from "../util/Spotify";
+import Track from "../Track/Track";
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
@@ -132,6 +133,11 @@ function App() {
             {error}
           </div>
         )}
+        <div className="TrackTest">
+          <Track />
+          <Track />
+          <Track />
+        </div>
         <div className="App-playlist">
           <SearchResults searchResults={searchResults} onAdd={addTrack} />
           <Playlist

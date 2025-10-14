@@ -4,7 +4,10 @@ const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || "";
 // in your .env to a secure (https) public URL provided by a tunneling service
 // such as ngrok, localtunnel, or Cloudflare Tunnel.
 const redirectUri =
-  import.meta.env.VITE_SPOTIFY_REDIRECT_URI || "http://localhost:3000/";
+  import.meta.env.VITE_SPOTIFY_REDIRECT_URI ||
+  (typeof window !== "undefined"
+    ? `${window.location.origin}/`
+    : "http://localhost:3000/");
 
 let accessToken = null;
 let refreshToken = null;

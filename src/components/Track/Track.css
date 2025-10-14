@@ -1,0 +1,21 @@
+.Track {
+  background-color: bisque;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.Track-information {
+  color: red;
+}
+
+.Track-information h3 {
+  color: rgb(5, 132, 243);
+}
+
+.Track-img {
+  border-radius: 16px;
+}
+
+.Track-action {
+  width: 150px;
+}
