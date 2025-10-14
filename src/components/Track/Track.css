@@ -13,6 +13,10 @@
 }
 
 .Track-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  display: block;
   border-radius: 16px;
 }
 

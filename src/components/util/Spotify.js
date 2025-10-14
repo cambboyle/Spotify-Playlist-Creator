@@ -214,10 +214,20 @@ const Spotify = {
       artist: track.artists && track.artists[0] ? track.artists[0].name : "",
       album: track.album ? track.album.name : "",
       albumImages: track.album && track.album.images ? track.album.images : [],
+      // choose image closest to 150px width inline (no helper)
       image:
-        track.album && track.album.images && track.album.images[0]
-          ? track.album.images[0].url
-          : null,
+        (track.album &&
+          track.album.images &&
+          track.album.images.length &&
+          // pick closest width to 150 using a single inline reduce
+          track.album.images.reduce(
+            (best, img) =>
+              Math.abs(img.width - 150) < Math.abs(best.width - 150)
+                ? img
+                : best,
+            track.album.images[0]
+          ).url) ||
+        null,
       uri: track.uri,
     }));
   },
