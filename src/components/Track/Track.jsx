@@ -54,18 +54,21 @@ const Track = ({
     <div className="Track">
       <div className="Track-information">
         <h3>{track?.name}</h3>
+        <div className="Image-container">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={`${track?.name} album art`}
+              className="Track-img"
+            />
+          ) : null}
+          {renderAction()}
+        </div>
+
         <p>
-          <strong>{track?.artist}</strong> | {track?.album}
+          <strong>{track?.artist}</strong> <br /> {track?.album}
         </p>
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={`${track?.name} album art`}
-            className="Track-img"
-          />
-        ) : null}
       </div>
-      {renderAction()}
     </div>
   );
 };

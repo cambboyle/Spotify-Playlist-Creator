@@ -1,11 +1,21 @@
 .Track {
-  background-color: bisque;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 2px solid black;
   padding: 10px;
   margin-top: 5px;
+  width: 200px;
 }
 
 .Track-information {
   color: red;
+}
+
+.Image-container {
+  position: relative;
+  margin-left: 5px;
 }
 
 .Track-information h3 {
@@ -17,9 +27,15 @@
   height: 150px;
   object-fit: cover;
   display: block;
+  border: 1px solid gray;
   border-radius: 16px;
 }
 
 .Track-action {
-  width: 150px;
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  position: absolute;
+  top: 70%;
+  left: 70%;
 }
