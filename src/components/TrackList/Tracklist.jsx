@@ -9,6 +9,9 @@ const Tracklist = (props) => {
         const isAdded = (props.playlistTracks || []).some(
           (t) => t.id === track.id
         );
+        const isRemoving = (props.removingTrackIds || []).some(
+          (id) => id === track.id
+        );
         return (
           <Track
             track={track}
@@ -17,6 +20,7 @@ const Tracklist = (props) => {
             isRemoval={props.isRemoval}
             onRemove={props.onRemove}
             isAdded={isAdded}
+            isRemoving={isRemoving}
           />
         );
       })}

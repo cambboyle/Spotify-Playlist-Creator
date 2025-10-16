@@ -20,6 +20,7 @@ const Track = ({
   track = defaultTrack,
   isRemoval = false,
   isAdded: isAddedProp = false,
+  isRemoving = false,
 }) => {
   const safeTrack = track || defaultTrack;
   const addTrack = useCallback(() => {
@@ -78,7 +79,29 @@ const Track = ({
         aria-pressed={added}
         aria-label={ariaLabel}
       >
-        {added ? "✔" : pending ? "…" : "+"}
+        {added ? (
+          "✔"
+        ) : pending ? (
+          <svg
+            className="Track-spinner"
+            width="18"
+            height="18"
+            viewBox="0 0 50 50"
+            aria-hidden="true"
+          >
+            <circle
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeDasharray="31.4 31.4"
+            />
+          </svg>
+        ) : (
+          "+"
+        )}
       </button>
     );
   };
@@ -99,7 +122,11 @@ const Track = ({
   }, []);
 
   return (
-    <div className={`Track ${mounted ? "Track--mounted" : ""}`}>
+    <div
+      className={`Track ${mounted ? "Track--mounted" : ""} ${
+        isRemoving ? "Track--removing" : ""
+      }`}
+    >
       <div className="Track-information">
         <h3>{safeTrack?.name}</h3>
         <div className="Image-container">

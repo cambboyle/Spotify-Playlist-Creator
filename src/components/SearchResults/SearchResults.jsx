@@ -8,6 +8,7 @@ const SearchResults = (props) => {
         tracks={props.searchResults}
         onAdd={props.onAdd}
         playlistTracks={props.playlistTracks}
+        removingTrackIds={props.removingTrackIds}
       />
     </div>
   );

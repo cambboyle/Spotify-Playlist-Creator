@@ -79,3 +79,25 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* animate out when a track is being removed from search results */
+.Track.Track--removing {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* spinner inside the button */
+.Track-spinner {
+  animation: spin 900ms linear infinite;
+  color: white;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
