@@ -14,7 +14,6 @@ function App() {
   const [userDisplayName, setUserDisplayName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [removingTrackIds, setRemovingTrackIds] = useState([]);
 
   // Search using Spotify API
   const search = useCallback(async (term) => {
@@ -77,16 +76,6 @@ function App() {
         resolve(next);
         return next;
       });
-
-      // mark track as removing so it can animate out of search results
-      setRemovingTrackIds((prev) => [...prev, track.id]);
-      // after animation duration, actually remove from searchResults and clear removing flag
-      setTimeout(() => {
-        setSearchResults((prevResults) =>
-          prevResults.filter((t) => t.id !== track.id)
-        );
-        setRemovingTrackIds((prev) => prev.filter((id) => id !== track.id));
-      }, 260);
     });
   }, []);
 
@@ -94,11 +83,6 @@ function App() {
     setPlaylistTracks((prevTracks) =>
       prevTracks.filter((currentTrack) => currentTrack.id !== track.id)
     );
-    // add back to search results if not already present
-    setSearchResults((prevResults) => {
-      if (prevResults.some((t) => t.id === track.id)) return prevResults;
-      return [track, ...prevResults];
-    });
   }, []);
 
   const updatePlaylistName = useCallback((name) => {
@@ -164,7 +148,6 @@ function App() {
             searchResults={searchResults}
             onAdd={addTrack}
             playlistTracks={playlistTracks}
-            removingTrackIds={removingTrackIds}
           />
           <Playlist
             playlistName={playlistName}
