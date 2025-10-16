@@ -6,6 +6,9 @@ const Tracklist = (props) => {
   return (
     <div className="Tracklist">
       {tracks.map((track) => {
+        const isAdded = (props.playlistTracks || []).some(
+          (t) => t.id === track.id
+        );
         return (
           <Track
             track={track}
@@ -13,6 +16,7 @@ const Tracklist = (props) => {
             onAdd={props.onAdd}
             isRemoval={props.isRemoval}
             onRemove={props.onRemove}
+            isAdded={isAdded}
           />
         );
       })}

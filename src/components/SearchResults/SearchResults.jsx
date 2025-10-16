@@ -4,7 +4,11 @@ const SearchResults = (props) => {
   return (
     <div>
       <h2>Results</h2>
-      <Tracklist tracks={props.searchResults} onAdd={props.onAdd} />
+      <Tracklist
+        tracks={props.searchResults}
+        onAdd={props.onAdd}
+        playlistTracks={props.playlistTracks}
+      />
     </div>
   );
 };

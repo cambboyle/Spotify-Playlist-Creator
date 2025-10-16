@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./Track.css";
 
 const defaultTrack = {
@@ -19,11 +19,24 @@ const Track = ({
   onRemove = () => {},
   track = defaultTrack,
   isRemoval = false,
+  isAdded: isAddedProp = false,
 }) => {
   const safeTrack = track || defaultTrack;
   const addTrack = useCallback(() => {
     onAdd(track);
   }, [onAdd, track]);
+
+  // local UI state: `added` mirrors parent-provided `isAddedProp` (pessimistic)
+  const [added, setAdded] = useState(Boolean(isAddedProp));
+  // `pending` is true while we've requested an add but parent hasn't confirmed yet
+  const [pending, setPending] = useState(false);
+
+  // sync `added` when parent confirms/unconfirms via prop
+  useEffect(() => {
+    setAdded(Boolean(isAddedProp));
+    // if parent confirmed addition, clear pending
+    if (isAddedProp) setPending(false);
+  }, [isAddedProp]);
 
   const removeTrack = useCallback(() => {
     onRemove(track);
@@ -37,9 +50,35 @@ const Track = ({
         </button>
       );
     }
+    const onClick = async () => {
+      // start pending UI immediately
+      setPending(true);
+      try {
+        // call parent add (parent will update `isAdded` prop when done)
+        await addTrack();
+      } catch (err) {
+        // if add failed, clear pending and leave added false
+        setPending(false);
+        console.error("addTrack failed", err);
+      }
+    };
+
+    const ariaLabel = added
+      ? "Added to playlist"
+      : pending
+      ? "Adding to playlist"
+      : "Add to playlist";
+
     return (
-      <button className="Track-action" onClick={addTrack}>
-        +
+      <button
+        className={`Track-action ${added ? "Track-action--added" : ""} ${
+          pending ? "pending" : ""
+        }`}
+        onClick={onClick}
+        aria-pressed={added}
+        aria-label={ariaLabel}
+      >
+        {added ? "✔" : pending ? "…" : "+"}
       </button>
     );
   };
@@ -52,8 +91,15 @@ const Track = ({
       ? safeTrack.album.images[0].url
       : null);
 
+  // mount animation class
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setMounted(true), 10);
+    return () => clearTimeout(id);
+  }, []);
+
   return (
-    <div className="Track">
+    <div className={`Track ${mounted ? "Track--mounted" : ""}`}>
       <div className="Track-information">
         <h3>{safeTrack?.name}</h3>
         <div className="Image-container">

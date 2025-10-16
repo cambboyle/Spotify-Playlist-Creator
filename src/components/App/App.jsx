@@ -70,6 +70,10 @@ function App() {
       if (prevTracks.some((savedTrack) => savedTrack.id === track.id)) {
         return prevTracks;
       }
+      // remove from search results when added
+      setSearchResults((prevResults) =>
+        prevResults.filter((t) => t.id !== track.id)
+      );
       return [...prevTracks, track];
     });
   }, []);
@@ -78,6 +82,11 @@ function App() {
     setPlaylistTracks((prevTracks) =>
       prevTracks.filter((currentTrack) => currentTrack.id !== track.id)
     );
+    // add back to search results if not already present
+    setSearchResults((prevResults) => {
+      if (prevResults.some((t) => t.id === track.id)) return prevResults;
+      return [track, ...prevResults];
+    });
   }, []);
 
   const updatePlaylistName = useCallback((name) => {
@@ -139,7 +148,11 @@ function App() {
           <Track />
         </div>
         <div className="App-playlist">
-          <SearchResults searchResults={searchResults} onAdd={addTrack} />
+          <SearchResults
+            searchResults={searchResults}
+            onAdd={addTrack}
+            playlistTracks={playlistTracks}
+          />
           <Playlist
             playlistName={playlistName}
             playlistTracks={playlistTracks}
