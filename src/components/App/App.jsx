@@ -113,12 +113,13 @@ function App() {
     setError(null);
     setIsLoading(true);
     try {
-      const tracks = await Spotify.getPlaylist(id);
-      // Spotify.getPlaylist returns track objects; name isn't returned here,
-      // so we'll fetch the playlist's name via getUserPlaylists or leave as is.
-      setPlaylistTracks(tracks || []);
-      setPlaylistId(id);
-      // Optionally set the playlistName to empty or keep previous; we'll keep current name
+      const result = await Spotify.getPlaylist(id);
+      // result: { name, tracks }
+      if (result) {
+        setPlaylistName(result.name || "");
+        setPlaylistTracks(result.tracks || []);
+        setPlaylistId(id);
+      }
     } catch (err) {
       console.error("Failed to load playlist", err);
       setError("Failed to load selected playlist.");

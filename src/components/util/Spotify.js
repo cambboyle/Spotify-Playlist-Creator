@@ -367,13 +367,27 @@ const Spotify = {
     return json.items.map((p) => ({ id: p.id, name: p.name }));
   },
 
-  // Retrieve tracks for a playlist id
+  // Retrieve playlist metadata and tracks for a playlist id
+  // Returns an object: { name: string, tracks: Array<Track> }
   async getPlaylist(playlistId) {
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
         "Not authorized. Call authorize() to connect to Spotify."
       );
+
+    // Fetch playlist details (to obtain name)
+    const metaResp = await fetch(
+      `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (!metaResp.ok) throw new Error("Failed to fetch playlist metadata");
+    const metaJson = await metaResp.json();
+    const playlistName = metaJson && metaJson.name ? metaJson.name : "";
+
+    // Fetch playlist tracks
     const resp = await fetch(
       `https://api.spotify.com/v1/playlists/${encodeURIComponent(
         playlistId
@@ -384,8 +398,7 @@ const Spotify = {
     );
     if (!resp.ok) throw new Error("Failed to fetch playlist tracks");
     const json = await resp.json();
-    if (!json.items) return [];
-    return json.items
+    const tracks = (json.items || [])
       .map((item) => item.track)
       .filter(Boolean)
       .map((track) => {
@@ -413,6 +426,8 @@ const Spotify = {
           uri: track.uri,
         };
       });
+
+    return { name: playlistName, tracks };
   },
 
   // Return current user's profile (me)
