@@ -6,12 +6,16 @@ import SearchBar from "../SearchBar/SearchBar";
 import SearchResults from "../SearchResults/SearchResults";
 import Spotify from "../util/Spotify";
 import Track from "../Track/Track";
+import ConfirmModal from "../Common/ConfirmModal";
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [playlistName, setPlaylistName] = useState("New Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [playlistId, setPlaylistId] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [pendingSelectId, setPendingSelectId] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [userDisplayName, setUserDisplayName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,6 +79,7 @@ function App() {
           return prevTracks;
         }
         const next = [...prevTracks, track];
+        setIsDirty(true);
         resolve(next);
         return next;
       });
@@ -85,10 +90,12 @@ function App() {
     setPlaylistTracks((prevTracks) =>
       prevTracks.filter((currentTrack) => currentTrack.id !== track.id)
     );
+    setIsDirty(true);
   }, []);
 
   const updatePlaylistName = useCallback((name) => {
     setPlaylistName(name);
+    setIsDirty(true);
   }, []);
 
   const savePlaylist = useCallback(() => {
@@ -100,6 +107,7 @@ function App() {
         setPlaylistName("New Playlist");
         setPlaylistTracks([]);
         setPlaylistId(null);
+        setIsDirty(false);
       })
       .catch((err) => {
         console.error("Save playlist failed", err);
@@ -119,6 +127,7 @@ function App() {
         setPlaylistName(result.name || "");
         setPlaylistTracks(result.tracks || []);
         setPlaylistId(id);
+        setIsDirty(false);
       }
     } catch (err) {
       console.error("Failed to load playlist", err);
@@ -127,6 +136,34 @@ function App() {
       setIsLoading(false);
     }
   }, []);
+
+  // Called by PlaylistList when the user clicks a playlist; we check for dirty
+  // state and confirm before delegating to selectPlaylist.
+  const attemptSelectPlaylist = useCallback(
+    (id) => {
+      if (!id) return;
+      if (isDirty) {
+        setPendingSelectId(id);
+        setIsConfirmOpen(true);
+        return;
+      }
+      selectPlaylist(id);
+    },
+    [isDirty, selectPlaylist]
+  );
+
+  const handleConfirmCancel = useCallback(() => {
+    setPendingSelectId(null);
+    setIsConfirmOpen(false);
+  }, []);
+
+  const handleConfirmContinue = useCallback(() => {
+    const id = pendingSelectId;
+    setPendingSelectId(null);
+    setIsConfirmOpen(false);
+    // Discard local edits and load the Spotify version
+    selectPlaylist(id);
+  }, [pendingSelectId, selectPlaylist]);
 
   return (
     <div>
@@ -172,7 +209,7 @@ function App() {
             onAdd={addTrack}
             playlistTracks={playlistTracks}
           />
-          <PlaylistList onSelect={selectPlaylist} />
+          <PlaylistList onSelect={attemptSelectPlaylist} />
           <Playlist
             playlistName={playlistName}
             playlistTracks={playlistTracks}
@@ -180,6 +217,13 @@ function App() {
             onRemove={removeTrack}
             onSave={savePlaylist}
             isLoading={isLoading}
+          />
+          <ConfirmModal
+            isOpen={isConfirmOpen}
+            title="Discard changes?"
+            message="You have unsaved changes. If you continue, your edits will be lost."
+            onCancel={handleConfirmCancel}
+            onConfirm={handleConfirmContinue}
           />
         </div>
       </div>
