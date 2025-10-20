@@ -12,6 +12,7 @@ const redirectUri =
 let accessToken = null;
 let refreshToken = null;
 let expiresAt = null; // epoch ms
+let userId = null; // cached current user id
 
 const STORAGE_KEY = "spotify_pkce_verifier";
 
@@ -240,7 +241,7 @@ const Spotify = {
   },
 
   async savePlaylist(name, trackUris) {
-    if (!name || !trackUris || trackUris.length === 0) return;
+    if (!name) return;
 
     const token = await this.getAccessToken();
     if (!token)
@@ -253,18 +254,58 @@ const Spotify = {
       "Content-Type": "application/json",
     };
 
-    // Get the user's Spotify ID
-    const userResponse = await fetch("https://api.spotify.com/v1/me", {
-      headers,
-    });
-    if (!userResponse.ok) throw new Error("Failed to get user ID from Spotify");
-    const userJson = await userResponse.json();
-    const userId = userJson.id;
+    // Get the user's Spotify ID (cached)
+    const currentUserId = await this.getCurrentUserId();
+
+    // If an id is provided, update existing playlist; otherwise create a new one
+    // Accept a third optional parameter `id` for playlist id
+    // (legacy callers may not pass it)
+    // NOTE: keep signature backward-compatible
+    const maybeId = arguments[2] || null;
+
+    if (maybeId) {
+      const playlistId = maybeId;
+
+      // Update playlist name
+      const patchResponse = await fetch(
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(
+          playlistId
+        )}`,
+        {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ name }),
+        }
+      );
+
+      // Spotify API supports PUT to replace playlist items
+      // If trackUris is provided (can be empty array), replace tracks
+      let replaceResponse = null;
+      if (Array.isArray(trackUris)) {
+        replaceResponse = await fetch(
+          `https://api.spotify.com/v1/playlists/${encodeURIComponent(
+            playlistId
+          )}/tracks`,
+          {
+            method: "PUT",
+            headers,
+            body: JSON.stringify({ uris: trackUris }),
+          }
+        );
+      }
+
+      if (patchResponse && !patchResponse.ok)
+        throw new Error("Failed to update playlist name");
+      if (replaceResponse && !replaceResponse.ok)
+        throw new Error("Failed to replace playlist tracks");
+
+      return { id: playlistId };
+    }
 
     // Create a new playlist
     const createResponse = await fetch(
       `https://api.spotify.com/v1/users/${encodeURIComponent(
-        userId
+        currentUserId
       )}/playlists`,
       {
         method: "POST",
@@ -276,21 +317,102 @@ const Spotify = {
     const createJson = await createResponse.json();
     const playlistId = createJson.id;
 
-    // Add tracks to the playlist
-    const addResponse = await fetch(
+    // Add tracks to the playlist (only if provided)
+    if (Array.isArray(trackUris) && trackUris.length > 0) {
+      const addResponse = await fetch(
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(
+          playlistId
+        )}/tracks`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ uris: trackUris }),
+        }
+      );
+
+      if (!addResponse.ok) throw new Error("Failed to add tracks to playlist");
+      return addResponse.json();
+    }
+
+    return { id: playlistId };
+  },
+
+  // Return cached current user's id (string)
+  async getCurrentUserId() {
+    if (userId) return userId;
+    const profile = await this.getCurrentUser();
+    if (!profile || !profile.id)
+      throw new Error("Failed to get current user id");
+    userId = profile.id;
+    return userId;
+  },
+
+  // Retrieve the current user's playlists (id + name only)
+  async getUserPlaylists() {
+    const token = await this.getAccessToken();
+    if (!token)
+      throw new Error(
+        "Not authorized. Call authorize() to connect to Spotify."
+      );
+    const uid = await this.getCurrentUserId();
+    const resp = await fetch(
+      `https://api.spotify.com/v1/users/${encodeURIComponent(uid)}/playlists`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (!resp.ok) throw new Error("Failed to fetch user playlists");
+    const json = await resp.json();
+    if (!json.items) return [];
+    return json.items.map((p) => ({ id: p.id, name: p.name }));
+  },
+
+  // Retrieve tracks for a playlist id
+  async getPlaylist(playlistId) {
+    const token = await this.getAccessToken();
+    if (!token)
+      throw new Error(
+        "Not authorized. Call authorize() to connect to Spotify."
+      );
+    const resp = await fetch(
       `https://api.spotify.com/v1/playlists/${encodeURIComponent(
         playlistId
       )}/tracks`,
       {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ uris: trackUris }),
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
-
-    if (!addResponse.ok) throw new Error("Failed to add tracks to playlist");
-
-    return addResponse.json();
+    if (!resp.ok) throw new Error("Failed to fetch playlist tracks");
+    const json = await resp.json();
+    if (!json.items) return [];
+    return json.items
+      .map((item) => item.track)
+      .filter(Boolean)
+      .map((track) => {
+        const images =
+          track.album && track.album.images ? track.album.images : [];
+        const image640 = images[0] && images[0].url ? images[0].url : null;
+        const image300 = images[1] && images[1].url ? images[1].url : null;
+        const image64 = images[2] && images[2].url ? images[2].url : null;
+        return {
+          id: track.id,
+          name: track.name,
+          artist:
+            track.artists && track.artists[0] ? track.artists[0].name : "",
+          album: track.album ? track.album.name : "",
+          albumImages: images,
+          image640,
+          image300,
+          image64,
+          image:
+            image300 ||
+            image640 ||
+            image64 ||
+            (images[0] && images[0].url) ||
+            null,
+          uri: track.uri,
+        };
+      });
   },
 
   // Return current user's profile (me)

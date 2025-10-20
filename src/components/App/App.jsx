@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import "./App.css";
 import Playlist from "../Playlist/Playlist";
+import PlaylistList from "../Playlist/PlaylistList";
 import SearchBar from "../SearchBar/SearchBar";
 import SearchResults from "../SearchResults/SearchResults";
 import Spotify from "../util/Spotify";
@@ -10,6 +11,7 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [playlistName, setPlaylistName] = useState("New Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [playlistId, setPlaylistId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [userDisplayName, setUserDisplayName] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,17 +95,37 @@ function App() {
     setError(null);
     setIsLoading(true);
     const trackUris = playlistTracks.map((track) => track.uri);
-    Spotify.savePlaylist(playlistName, trackUris)
+    Spotify.savePlaylist(playlistName, trackUris, playlistId)
       .then(() => {
         setPlaylistName("New Playlist");
         setPlaylistTracks([]);
+        setPlaylistId(null);
       })
       .catch((err) => {
         console.error("Save playlist failed", err);
         setError("Failed to save playlist.");
       })
       .finally(() => setIsLoading(false));
-  }, [playlistName, playlistTracks]);
+  }, [playlistName, playlistTracks, playlistId]);
+
+  const selectPlaylist = useCallback(async (id) => {
+    if (!id) return;
+    setError(null);
+    setIsLoading(true);
+    try {
+      const tracks = await Spotify.getPlaylist(id);
+      // Spotify.getPlaylist returns track objects; name isn't returned here,
+      // so we'll fetch the playlist's name via getUserPlaylists or leave as is.
+      setPlaylistTracks(tracks || []);
+      setPlaylistId(id);
+      // Optionally set the playlistName to empty or keep previous; we'll keep current name
+    } catch (err) {
+      console.error("Failed to load playlist", err);
+      setError("Failed to load selected playlist.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <div>
@@ -149,6 +171,7 @@ function App() {
             onAdd={addTrack}
             playlistTracks={playlistTracks}
           />
+          <PlaylistList onSelect={selectPlaylist} />
           <Playlist
             playlistName={playlistName}
             playlistTracks={playlistTracks}
