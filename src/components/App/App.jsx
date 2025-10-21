@@ -11,6 +11,7 @@ import ConfirmModal from "../Common/ConfirmModal";
 function App() {
   const [searchResults, setSearchResults] = useState({ items: [], total: 0 });
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTotal, setSearchTotal] = useState(0);
   const [playlistName, setPlaylistName] = useState("New Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [playlistId, setPlaylistId] = useState(null);
@@ -24,21 +25,31 @@ function App() {
 
   // Search using Spotify API
   // search(term, limit, offset)
-  const search = useCallback(async (term, limit = 10, offset = 0) => {
-    if (!term) return;
-    setError(null);
-    setIsLoading(true);
-    setSearchTerm(term);
-    try {
-      const results = await Spotify.search(term, limit, offset);
-      setSearchResults(results);
-    } catch (err) {
-      console.error("Search failed", err);
-      setError("Search failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const search = useCallback(
+    async (term, limit = 10, offset = 0) => {
+      if (!term) return;
+      setError(null);
+      setIsLoading(true);
+      setSearchTerm(term);
+      try {
+        const results = await Spotify.search(term, limit, offset);
+        // If this is a new search term (offset === 0), update total
+        if (offset === 0) {
+          setSearchTotal(results.total);
+          setSearchResults(results);
+        } else {
+          // For paging, keep the original total
+          setSearchResults({ items: results.items, total: searchTotal });
+        }
+      } catch (err) {
+        console.error("Search failed", err);
+        setError("Search failed. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [searchTotal]
+  );
 
   // Check for token on mount (when Spotify redirects back with token in URL)
   useEffect(() => {
