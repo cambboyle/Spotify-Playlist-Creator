@@ -28,6 +28,11 @@ const SearchResults = ({
     }
   };
 
+  // Calculate start/end indices for current page
+  const total = searchResults?.total || 0;
+  const startIdx = total === 0 ? 0 : shown * (page - 1) + 1;
+  const endIdx = Math.min(page * shown, total);
+
   return (
     <div>
       <h2>Results</h2>
@@ -51,7 +56,9 @@ const SearchResults = ({
           Show 100
         </button>
         <span style={{ marginLeft: "1em" }}>
-          Showing {searchResults?.items?.length || 0} of {searchResults?.total || 0} results
+          {total === 0
+            ? "No results"
+            : `Showing ${startIdx}–${endIdx} of ${total} results`}
         </span>
       </div>
       <div style={{ marginBottom: "0.5em" }}>
@@ -62,13 +69,10 @@ const SearchResults = ({
           Previous
         </button>
         <span style={{ margin: "0 1em" }}>
-          Page {page} of {Math.max(1, Math.ceil((searchResults?.total || 0) / shown))}
+          Page {page} of {Math.max(1, Math.ceil(total / shown))}
         </span>
         <button
-          disabled={
-            isLoading ||
-            page >= Math.ceil((searchResults?.total || 0) / shown)
-          }
+          disabled={isLoading || page >= Math.ceil(total / shown)}
           onClick={() => handlePageChange(page + 1)}
         >
           Next
