@@ -32,6 +32,7 @@ const SearchResults = ({
   const total = searchResults?.total || 0;
   const startIdx = total === 0 ? 0 : shown * (page - 1) + 1;
   const endIdx = Math.min(page * shown, total);
+  const lastPage = Math.max(1, Math.ceil(total / shown));
 
   return (
     <div>
@@ -64,18 +65,30 @@ const SearchResults = ({
       <div style={{ marginBottom: "0.5em" }}>
         <button
           disabled={isLoading || page <= 1}
+          onClick={() => handlePageChange(1)}
+        >
+          First
+        </button>
+        <button
+          disabled={isLoading || page <= 1}
           onClick={() => handlePageChange(page - 1)}
         >
           Previous
         </button>
         <span style={{ margin: "0 1em" }}>
-          Page {page} of {Math.max(1, Math.ceil(total / shown))}
+          Page {page} of {lastPage}
         </span>
         <button
-          disabled={isLoading || page >= Math.ceil(total / shown)}
+          disabled={isLoading || page >= lastPage}
           onClick={() => handlePageChange(page + 1)}
         >
           Next
+        </button>
+        <button
+          disabled={isLoading || page >= lastPage}
+          onClick={() => handlePageChange(lastPage)}
+        >
+          Last
         </button>
       </div>
       <Tracklist
