@@ -186,7 +186,8 @@ const Spotify = {
     window.location = authUrl;
   },
 
-  async search(term) {
+  // Search tracks with pagination: limit (default 10), offset (default 0)
+  async search(term, limit = 10, offset = 0) {
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
@@ -196,7 +197,7 @@ const Spotify = {
     const response = await fetch(
       `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
         term
-      )}`,
+      )}&limit=${limit}&offset=${offset}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -204,21 +205,17 @@ const Spotify = {
       }
     );
 
-    if (!response.ok) return [];
+    if (!response.ok) return { items: [], total: 0 };
 
     const jsonResponse = await response.json();
-    if (!jsonResponse.tracks) return [];
+    if (!jsonResponse.tracks) return { items: [], total: 0 };
 
-    return jsonResponse.tracks.items.map((track) => {
+    const items = jsonResponse.tracks.items.map((track) => {
       const images =
         track.album && track.album.images ? track.album.images : [];
-
-      // Spotify returns images in descending order (usually 640, 300, 64).
-      // Expose the three common sizes directly by index for simplicity.
       const image640 = images[0] && images[0].url ? images[0].url : null;
       const image300 = images[1] && images[1].url ? images[1].url : null;
       const image64 = images[2] && images[2].url ? images[2].url : null;
-
       return {
         id: track.id,
         name: track.name,
@@ -228,7 +225,6 @@ const Spotify = {
         image640,
         image300,
         image64,
-        // legacy `image` kept for compatibility; prefer image300 where possible
         image:
           image300 ||
           image640 ||
@@ -238,6 +234,7 @@ const Spotify = {
         uri: track.uri,
       };
     });
+    return { items, total: jsonResponse.tracks.total || items.length };
   },
 
   async savePlaylist(name, trackUris) {
@@ -347,7 +344,7 @@ const Spotify = {
     return userId;
   },
 
-  // Retrieve the current user's playlists (id + name only)
+  // Retrieve all of the current user's playlists (id + name only), paginated
   async getUserPlaylists() {
     const token = await this.getAccessToken();
     if (!token)
@@ -355,19 +352,27 @@ const Spotify = {
         "Not authorized. Call authorize() to connect to Spotify."
       );
     const uid = await this.getCurrentUserId();
-    const resp = await fetch(
-      `https://api.spotify.com/v1/users/${encodeURIComponent(uid)}/playlists`,
-      {
+    let url = `https://api.spotify.com/v1/users/${encodeURIComponent(
+      uid
+    )}/playlists?limit=50`;
+    let allItems = [];
+    while (url) {
+      const resp = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) throw new Error("Failed to fetch user playlists");
+      const json = await resp.json();
+      if (json.items && Array.isArray(json.items)) {
+        allItems = allItems.concat(
+          json.items.map((p) => ({ id: p.id, name: p.name }))
+        );
       }
-    );
-    if (!resp.ok) throw new Error("Failed to fetch user playlists");
-    const json = await resp.json();
-    if (!json.items) return [];
-    return json.items.map((p) => ({ id: p.id, name: p.name }));
+      url = json.next;
+    }
+    return allItems;
   },
 
-  // Retrieve playlist metadata and tracks for a playlist id
+  // Retrieve playlist metadata and all tracks for a playlist id (paginated)
   // Returns an object: { name: string, tracks: Array<Track> }
   async getPlaylist(playlistId) {
     const token = await this.getAccessToken();
@@ -387,47 +392,50 @@ const Spotify = {
     const metaJson = await metaResp.json();
     const playlistName = metaJson && metaJson.name ? metaJson.name : "";
 
-    // Fetch playlist tracks
-    const resp = await fetch(
-      `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-        playlistId
-      )}/tracks`,
-      {
+    // Fetch all playlist tracks (paginated)
+    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(
+      playlistId
+    )}/tracks?limit=100`;
+    let allTracks = [];
+    while (url) {
+      const resp = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    if (!resp.ok) throw new Error("Failed to fetch playlist tracks");
-    const json = await resp.json();
-    const tracks = (json.items || [])
-      .map((item) => item.track)
-      .filter(Boolean)
-      .map((track) => {
-        const images =
-          track.album && track.album.images ? track.album.images : [];
-        const image640 = images[0] && images[0].url ? images[0].url : null;
-        const image300 = images[1] && images[1].url ? images[1].url : null;
-        const image64 = images[2] && images[2].url ? images[2].url : null;
-        return {
-          id: track.id,
-          name: track.name,
-          artist:
-            track.artists && track.artists[0] ? track.artists[0].name : "",
-          album: track.album ? track.album.name : "",
-          albumImages: images,
-          image640,
-          image300,
-          image64,
-          image:
-            image300 ||
-            image640 ||
-            image64 ||
-            (images[0] && images[0].url) ||
-            null,
-          uri: track.uri,
-        };
       });
+      if (!resp.ok) throw new Error("Failed to fetch playlist tracks");
+      const json = await resp.json();
+      const tracks = (json.items || [])
+        .map((item) => item.track)
+        .filter(Boolean)
+        .map((track) => {
+          const images =
+            track.album && track.album.images ? track.album.images : [];
+          const image640 = images[0] && images[0].url ? images[0].url : null;
+          const image300 = images[1] && images[1].url ? images[1].url : null;
+          const image64 = images[2] && images[2].url ? images[2].url : null;
+          return {
+            id: track.id,
+            name: track.name,
+            artist:
+              track.artists && track.artists[0] ? track.artists[0].name : "",
+            album: track.album ? track.album.name : "",
+            albumImages: images,
+            image640,
+            image300,
+            image64,
+            image:
+              image300 ||
+              image640 ||
+              image64 ||
+              (images[0] && images[0].url) ||
+              null,
+            uri: track.uri,
+          };
+        });
+      allTracks = allTracks.concat(tracks);
+      url = json.next;
+    }
 
-    return { name: playlistName, tracks };
+    return { name: playlistName, tracks: allTracks };
   },
 
   // Return current user's profile (me)

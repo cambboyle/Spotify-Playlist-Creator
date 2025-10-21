@@ -9,7 +9,8 @@ import Track from "../Track/Track";
 import ConfirmModal from "../Common/ConfirmModal";
 
 function App() {
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState({ items: [], total: 0 });
+  const [searchTerm, setSearchTerm] = useState("");
   const [playlistName, setPlaylistName] = useState("New Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [playlistId, setPlaylistId] = useState(null);
@@ -22,12 +23,14 @@ function App() {
   const [error, setError] = useState(null);
 
   // Search using Spotify API
-  const search = useCallback(async (term) => {
+  // search(term, limit, offset)
+  const search = useCallback(async (term, limit = 10, offset = 0) => {
     if (!term) return;
     setError(null);
     setIsLoading(true);
+    setSearchTerm(term);
     try {
-      const results = await Spotify.search(term);
+      const results = await Spotify.search(term, limit, offset);
       setSearchResults(results);
     } catch (err) {
       console.error("Search failed", err);
@@ -205,9 +208,12 @@ function App() {
         </div>
         <div className="App-playlist">
           <SearchResults
+            searchTerm={searchTerm}
+            onSearch={search}
             searchResults={searchResults}
             onAdd={addTrack}
             playlistTracks={playlistTracks}
+            isLoading={isLoading}
           />
           <PlaylistList onSelect={attemptSelectPlaylist} />
           <Playlist
