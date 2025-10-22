@@ -20,7 +20,7 @@ const Playlist = (props) => {
 
   const total = (props.playlistTracks || []).length;
   const lastPage = Math.max(1, Math.ceil(total / shown));
-  const startIdx = total === 0 ? 0 : (shown * (page - 1)) + 1;
+  const startIdx = total === 0 ? 0 : shown * (page - 1) + 1;
   const endIdx = Math.min(page * shown, total);
 
   const displayedTracks = (props.playlistTracks || []).slice(
@@ -37,13 +37,19 @@ const Playlist = (props) => {
           <button disabled={page <= 1} onClick={() => setPage(1)}>
             First
           </button>
-          <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+          <button
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
             Prev
           </button>
           <span style={{ margin: "0 0.5rem" }}>
             Page {page} of {lastPage}
           </span>
-          <button disabled={page >= lastPage} onClick={() => setPage((p) => Math.min(lastPage, p + 1))}>
+          <button
+            disabled={page >= lastPage}
+            onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
+          >
             Next
           </button>
           <button disabled={page >= lastPage} onClick={() => setPage(lastPage)}>
@@ -66,7 +72,9 @@ const Playlist = (props) => {
             <option value={100}>100</option>
           </select>
           <span style={{ marginLeft: "1rem" }}>
-            {total === 0 ? "No tracks" : `Showing ${startIdx}–${endIdx} of ${total} tracks`}
+            {total === 0
+              ? "No tracks"
+              : `Showing ${startIdx}–${endIdx} of ${total} tracks`}
           </span>
         </div>
       </div>

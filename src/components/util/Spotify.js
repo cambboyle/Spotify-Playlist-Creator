@@ -446,17 +446,27 @@ const Spotify = {
     const metaJson = await metaResp.json();
     const playlistName = metaJson && metaJson.name ? metaJson.name : "";
 
-    // Fetch all playlist tracks (paginated)
-    let url = `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-      playlistId
-    )}/tracks?limit=100`;
+    // Fetch all playlist tracks using offset-based pagination (limit 100)
+    const limit = 100;
+    let offset = 0;
     let allTracks = [];
-    while (url) {
-      const resp = await fetch(url, {
+    let total = null;
+
+    do {
+      const pageUrl = `https://api.spotify.com/v1/playlists/${encodeURIComponent(
+        playlistId
+      )}/tracks?limit=${limit}&offset=${offset}`;
+      const resp = await fetch(pageUrl, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!resp.ok) throw new Error("Failed to fetch playlist tracks");
       const json = await resp.json();
+
+      if (total === null) {
+        // json.total is the total number of tracks in the playlist
+        total = typeof json.total === "number" ? json.total : null;
+      }
+
       const tracks = (json.items || [])
         .map((item) => item.track)
         .filter(Boolean)
@@ -485,9 +495,11 @@ const Spotify = {
             uri: track.uri,
           };
         });
+
       allTracks = allTracks.concat(tracks);
-      url = json.next;
-    }
+      offset += limit;
+      // Stop if we've fetched all tracks (when total is known)
+    } while (total === null || allTracks.length < total);
 
     return { name: playlistName, tracks: allTracks };
   },
