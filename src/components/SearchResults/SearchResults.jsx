@@ -50,12 +50,6 @@ const SearchResults = ({
         >
           Show 50
         </button>
-        <button
-          disabled={isLoading || shown === 100}
-          onClick={() => handleShowMore(100)}
-        >
-          Show 100
-        </button>
         <span style={{ marginLeft: "1em" }}>
           {total === 0
             ? "No results"

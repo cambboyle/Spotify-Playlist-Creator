@@ -254,10 +254,14 @@ const Spotify = {
     // Get the user's Spotify ID (cached)
     const currentUserId = await this.getCurrentUserId();
 
+    // Helper: split array into chunks
+    const chunkArray = (arr, size) => {
+      const chunks = [];
+      for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
+      return chunks;
+    };
+
     // If an id is provided, update existing playlist; otherwise create a new one
-    // Accept a third optional parameter `id` for playlist id
-    // (legacy callers may not pass it)
-    // NOTE: keep signature backward-compatible
     const maybeId = arguments[2] || null;
 
     if (maybeId) {
@@ -265,45 +269,74 @@ const Spotify = {
 
       // Update playlist name
       const patchResponse = await fetch(
-        `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-          playlistId
-        )}`,
+        `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}`,
         {
           method: "PUT",
           headers,
           body: JSON.stringify({ name }),
         }
       );
+      if (patchResponse && !patchResponse.ok) throw new Error("Failed to update playlist name");
 
-      // Spotify API supports PUT to replace playlist items
-      // If trackUris is provided (can be empty array), replace tracks
-      let replaceResponse = null;
+      // If trackUris is provided, replace/add in batches of 100
       if (Array.isArray(trackUris)) {
-        replaceResponse = await fetch(
-          `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-            playlistId
-          )}/tracks`,
-          {
-            method: "PUT",
-            headers,
-            body: JSON.stringify({ uris: trackUris }),
-          }
-        );
-      }
+        // If empty array, explicitly replace with empty list (clears playlist)
+        if (trackUris.length === 0) {
+          const clearResp = await fetch(
+            `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+            {
+              method: "PUT",
+              headers,
+              body: JSON.stringify({ uris: [] }),
+            }
+          );
+          if (!clearResp.ok) throw new Error("Failed to clear playlist tracks");
+        } else if (trackUris.length <= 100) {
+          // Single replace
+          const replaceResp = await fetch(
+            `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+            {
+              method: "PUT",
+              headers,
+              body: JSON.stringify({ uris: trackUris }),
+            }
+          );
+          if (!replaceResp.ok) throw new Error("Failed to replace playlist tracks");
+        } else {
+          // Replace first 100, then append remaining in POST batches
+          const first = trackUris.slice(0, 100);
+          const replaceResp = await fetch(
+            `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+            {
+              method: "PUT",
+              headers,
+              body: JSON.stringify({ uris: first }),
+            }
+          );
+          if (!replaceResp.ok) throw new Error("Failed to replace playlist tracks (initial chunk)");
 
-      if (patchResponse && !patchResponse.ok)
-        throw new Error("Failed to update playlist name");
-      if (replaceResponse && !replaceResponse.ok)
-        throw new Error("Failed to replace playlist tracks");
+          const remaining = trackUris.slice(100);
+          const chunks = chunkArray(remaining, 100);
+          for (const chunk of chunks) {
+            const addResp = await fetch(
+              `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+              {
+                method: "POST",
+                headers,
+                body: JSON.stringify({ uris: chunk }),
+              }
+            );
+            if (!addResp.ok) throw new Error("Failed to append playlist tracks");
+          }
+        }
+      }
 
       return { id: playlistId };
     }
 
     // Create a new playlist
     const createResponse = await fetch(
-      `https://api.spotify.com/v1/users/${encodeURIComponent(
-        currentUserId
-      )}/playlists`,
+      `https://api.spotify.com/v1/users/${encodeURIComponent(currentUserId)}/playlists`,
       {
         method: "POST",
         headers,
@@ -314,21 +347,20 @@ const Spotify = {
     const createJson = await createResponse.json();
     const playlistId = createJson.id;
 
-    // Add tracks to the playlist (only if provided)
+    // Add tracks to the playlist in batches of 100
     if (Array.isArray(trackUris) && trackUris.length > 0) {
-      const addResponse = await fetch(
-        `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-          playlistId
-        )}/tracks`,
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ uris: trackUris }),
-        }
-      );
-
-      if (!addResponse.ok) throw new Error("Failed to add tracks to playlist");
-      return addResponse.json();
+      const chunks = chunkArray(trackUris, 100);
+      for (const chunk of chunks) {
+        const addResponse = await fetch(
+          `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}/tracks`,
+          {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ uris: chunk }),
+          }
+        );
+        if (!addResponse.ok) throw new Error("Failed to add tracks to playlist");
+      }
     }
 
     return { id: playlistId };
