@@ -419,6 +419,8 @@ const Spotify = {
       if (json.items && Array.isArray(json.items)) {
         allItems = allItems.concat(
           // include track count so UI can display size without extra calls
+          // also include owner id and collaborative flag so callers can
+          // filter to playlists the current user can write to.
           json.items.map((p) => ({
             id: p.id,
             name: p.name,
@@ -426,6 +428,9 @@ const Spotify = {
               p.tracks && typeof p.tracks.total === "number"
                 ? p.tracks.total
                 : 0,
+            ownerId: p.owner && p.owner.id ? p.owner.id : null,
+            collaborative: !!p.collaborative,
+            public: typeof p.public === 'boolean' ? p.public : null,
           }))
         );
       }
