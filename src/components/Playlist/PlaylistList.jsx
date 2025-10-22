@@ -34,6 +34,7 @@ export default function PlaylistList({ onSelect }) {
             key={p.id}
             id={p.id}
             name={p.name}
+            trackCount={p.trackCount}
             onSelect={onSelect}
           />
         ))}

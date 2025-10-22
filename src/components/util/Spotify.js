@@ -418,7 +418,8 @@ const Spotify = {
       const json = await resp.json();
       if (json.items && Array.isArray(json.items)) {
         allItems = allItems.concat(
-          json.items.map((p) => ({ id: p.id, name: p.name }))
+          // include track count so UI can display size without extra calls
+          json.items.map((p) => ({ id: p.id, name: p.name, trackCount: p.tracks && typeof p.tracks.total === 'number' ? p.tracks.total : 0 }))
         );
       }
       url = json.next;
