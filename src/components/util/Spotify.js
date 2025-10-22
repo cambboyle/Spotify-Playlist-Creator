@@ -173,7 +173,9 @@ const Spotify = {
     const codeVerifier = generateCodeVerifier();
     sessionStorage.setItem(STORAGE_KEY, codeVerifier);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
-    const scope = "playlist-modify-public playlist-modify-private";
+    // Request read scopes so we can list private and collaborative playlists
+    const scope =
+      "playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative";
     const authEndpoint = "https://accounts.spotify.com/authorize";
     const authUrl = `${authEndpoint}?client_id=${encodeURIComponent(
       clientId
@@ -405,10 +407,8 @@ const Spotify = {
       throw new Error(
         "Not authorized. Call authorize() to connect to Spotify."
       );
-    const uid = await this.getCurrentUserId();
-    let url = `https://api.spotify.com/v1/users/${encodeURIComponent(
-      uid
-    )}/playlists?limit=50`;
+    // Use /me/playlists to return playlists for the current user (owned and followed)
+    let url = `https://api.spotify.com/v1/me/playlists?limit=50`;
     let allItems = [];
     while (url) {
       const resp = await fetch(url, {
@@ -419,7 +419,14 @@ const Spotify = {
       if (json.items && Array.isArray(json.items)) {
         allItems = allItems.concat(
           // include track count so UI can display size without extra calls
-          json.items.map((p) => ({ id: p.id, name: p.name, trackCount: p.tracks && typeof p.tracks.total === 'number' ? p.tracks.total : 0 }))
+          json.items.map((p) => ({
+            id: p.id,
+            name: p.name,
+            trackCount:
+              p.tracks && typeof p.tracks.total === "number"
+                ? p.tracks.total
+                : 0,
+          }))
         );
       }
       url = json.next;
