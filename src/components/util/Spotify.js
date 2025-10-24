@@ -148,7 +148,7 @@ const Spotify = {
         window.history.replaceState(
           {},
           document.title,
-          window.location.pathname
+          window.location.pathname,
         );
         return accessToken;
       } catch (err) {
@@ -166,7 +166,7 @@ const Spotify = {
   async authorize() {
     if (!clientId) {
       throw new Error(
-        "VITE_SPOTIFY_CLIENT_ID is not set. Register an app at https://developer.spotify.com and set VITE_SPOTIFY_CLIENT_ID in your .env file."
+        "VITE_SPOTIFY_CLIENT_ID is not set. Register an app at https://developer.spotify.com and set VITE_SPOTIFY_CLIENT_ID in your .env file.",
       );
     }
 
@@ -178,11 +178,11 @@ const Spotify = {
       "playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative";
     const authEndpoint = "https://accounts.spotify.com/authorize";
     const authUrl = `${authEndpoint}?client_id=${encodeURIComponent(
-      clientId
+      clientId,
     )}&response_type=code&redirect_uri=${encodeURIComponent(
-      redirectUri
+      redirectUri,
     )}&code_challenge_method=S256&code_challenge=${encodeURIComponent(
-      codeChallenge
+      codeChallenge,
     )}&scope=${encodeURIComponent(scope)}`;
 
     window.location = authUrl;
@@ -193,18 +193,18 @@ const Spotify = {
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
-        "Not authorized. Call authorize() to connect to Spotify."
+        "Not authorized. Call authorize() to connect to Spotify.",
       );
 
     const response = await fetch(
       `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
-        term
+        term,
       )}&limit=${limit}&offset=${offset}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) return { items: [], total: 0 };
@@ -239,19 +239,49 @@ const Spotify = {
     return { items, total: jsonResponse.tracks.total || items.length };
   },
 
+  // Helper: fetch with retry/backoff for transient errors
+  async fetchWithRetry(url, options, maxRetries = 3, initialDelay = 500) {
+    let attempt = 0;
+    let delay = initialDelay;
+    while (attempt <= maxRetries) {
+      try {
+        const response = await fetch(url, options);
+        // Retry on 429 (rate limit) or 5xx server errors
+        if (
+          response.status === 429 ||
+          (response.status >= 500 && response.status < 600)
+        ) {
+          if (attempt === maxRetries) return response;
+          await new Promise((res) => setTimeout(res, delay));
+          attempt++;
+          delay *= 2; // Exponential backoff
+          continue;
+        }
+        return response;
+      } catch (err) {
+        if (attempt === maxRetries) throw err;
+        await new Promise((res) => setTimeout(res, delay));
+        attempt++;
+        delay *= 2;
+      }
+    }
+    throw new Error("fetchWithRetry: exceeded max retries");
+  },
+
   async savePlaylist(name, trackUris) {
     if (!name) return;
 
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
-        "Not authorized. Call authorize() to connect to Spotify."
+        "Not authorized. Call authorize() to connect to Spotify.",
       );
 
     const headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     };
+    const fetchWithRetry = this.fetchWithRetry.bind(this);
 
     // Get the user's Spotify ID (cached)
     const currentUserId = await this.getCurrentUserId();
@@ -271,15 +301,15 @@ const Spotify = {
       const playlistId = maybeId;
 
       // Update playlist name
-      const patchResponse = await fetch(
+      const patchResponse = await fetchWithRetry(
         `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-          playlistId
+          playlistId,
         )}`,
         {
           method: "PUT",
           headers,
           body: JSON.stringify({ name }),
-        }
+        },
       );
       if (patchResponse && !patchResponse.ok)
         throw new Error("Failed to update playlist name");
@@ -288,61 +318,61 @@ const Spotify = {
       if (Array.isArray(trackUris)) {
         // If empty array, explicitly replace with empty list (clears playlist)
         if (trackUris.length === 0) {
-          const clearResp = await fetch(
+          const clearResp = await fetchWithRetry(
             `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-              playlistId
+              playlistId,
             )}/tracks`,
             {
               method: "PUT",
               headers,
               body: JSON.stringify({ uris: [] }),
-            }
+            },
           );
           if (!clearResp.ok) throw new Error("Failed to clear playlist tracks");
         } else if (trackUris.length <= 100) {
           // Single replace
-          const replaceResp = await fetch(
+          const replaceResp = await fetchWithRetry(
             `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-              playlistId
+              playlistId,
             )}/tracks`,
             {
               method: "PUT",
               headers,
               body: JSON.stringify({ uris: trackUris }),
-            }
+            },
           );
           if (!replaceResp.ok)
             throw new Error("Failed to replace playlist tracks");
         } else {
           // Replace first 100, then append remaining in POST batches
           const first = trackUris.slice(0, 100);
-          const replaceResp = await fetch(
+          const replaceResp = await fetchWithRetry(
             `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-              playlistId
+              playlistId,
             )}/tracks`,
             {
               method: "PUT",
               headers,
               body: JSON.stringify({ uris: first }),
-            }
+            },
           );
           if (!replaceResp.ok)
             throw new Error(
-              "Failed to replace playlist tracks (initial chunk)"
+              "Failed to replace playlist tracks (initial chunk)",
             );
 
           const remaining = trackUris.slice(100);
           const chunks = chunkArray(remaining, 100);
           for (const chunk of chunks) {
-            const addResp = await fetch(
+            const addResp = await fetchWithRetry(
               `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-                playlistId
+                playlistId,
               )}/tracks`,
               {
                 method: "POST",
                 headers,
                 body: JSON.stringify({ uris: chunk }),
-              }
+              },
             );
             if (!addResp.ok)
               throw new Error("Failed to append playlist tracks");
@@ -354,15 +384,15 @@ const Spotify = {
     }
 
     // Create a new playlist
-    const createResponse = await fetch(
+    const createResponse = await fetchWithRetry(
       `https://api.spotify.com/v1/users/${encodeURIComponent(
-        currentUserId
+        currentUserId,
       )}/playlists`,
       {
         method: "POST",
         headers,
         body: JSON.stringify({ name }),
-      }
+      },
     );
     if (!createResponse.ok) throw new Error("Failed to create playlist");
     const createJson = await createResponse.json();
@@ -372,15 +402,15 @@ const Spotify = {
     if (Array.isArray(trackUris) && trackUris.length > 0) {
       const chunks = chunkArray(trackUris, 100);
       for (const chunk of chunks) {
-        const addResponse = await fetch(
+        const addResponse = await fetchWithRetry(
           `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-            playlistId
+            playlistId,
           )}/tracks`,
           {
             method: "POST",
             headers,
             body: JSON.stringify({ uris: chunk }),
-          }
+          },
         );
         if (!addResponse.ok)
           throw new Error("Failed to add tracks to playlist");
@@ -405,7 +435,7 @@ const Spotify = {
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
-        "Not authorized. Call authorize() to connect to Spotify."
+        "Not authorized. Call authorize() to connect to Spotify.",
       );
     // Use /me/playlists to return playlists for the current user (owned and followed)
     let url = `https://api.spotify.com/v1/me/playlists?limit=50`;
@@ -431,7 +461,7 @@ const Spotify = {
             ownerId: p.owner && p.owner.id ? p.owner.id : null,
             collaborative: !!p.collaborative,
             public: typeof p.public === "boolean" ? p.public : null,
-          }))
+          })),
         );
       }
       url = json.next;
@@ -445,7 +475,7 @@ const Spotify = {
     const token = await this.getAccessToken();
     if (!token)
       throw new Error(
-        "Not authorized. Call authorize() to connect to Spotify."
+        "Not authorized. Call authorize() to connect to Spotify.",
       );
 
     // Fetch playlist details (to obtain name)
@@ -453,7 +483,7 @@ const Spotify = {
       `https://api.spotify.com/v1/playlists/${encodeURIComponent(playlistId)}`,
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
     if (!metaResp.ok) throw new Error("Failed to fetch playlist metadata");
     const metaJson = await metaResp.json();
@@ -467,7 +497,7 @@ const Spotify = {
 
     do {
       const pageUrl = `https://api.spotify.com/v1/playlists/${encodeURIComponent(
-        playlistId
+        playlistId,
       )}/tracks?limit=${limit}&offset=${offset}`;
       const resp = await fetch(pageUrl, {
         headers: { Authorization: `Bearer ${token}` },
