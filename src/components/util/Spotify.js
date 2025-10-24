@@ -297,6 +297,9 @@ const Spotify = {
     // If an id is provided, update existing playlist; otherwise create a new one
     const maybeId = arguments[2] || null;
 
+    // Helper to collect batch results
+    const batchResults = [];
+
     if (maybeId) {
       const playlistId = maybeId;
 
@@ -328,7 +331,12 @@ const Spotify = {
               body: JSON.stringify({ uris: [] }),
             },
           );
-          if (!clearResp.ok) throw new Error("Failed to clear playlist tracks");
+          batchResults.push({
+            type: "clear",
+            uris: [],
+            success: clearResp.ok,
+            error: clearResp.ok ? null : "Failed to clear playlist tracks",
+          });
         } else if (trackUris.length <= 100) {
           // Single replace
           const replaceResp = await fetchWithRetry(
@@ -341,8 +349,12 @@ const Spotify = {
               body: JSON.stringify({ uris: trackUris }),
             },
           );
-          if (!replaceResp.ok)
-            throw new Error("Failed to replace playlist tracks");
+          batchResults.push({
+            type: "replace",
+            uris: trackUris,
+            success: replaceResp.ok,
+            error: replaceResp.ok ? null : "Failed to replace playlist tracks",
+          });
         } else {
           // Replace first 100, then append remaining in POST batches
           const first = trackUris.slice(0, 100);
@@ -356,10 +368,14 @@ const Spotify = {
               body: JSON.stringify({ uris: first }),
             },
           );
-          if (!replaceResp.ok)
-            throw new Error(
-              "Failed to replace playlist tracks (initial chunk)",
-            );
+          batchResults.push({
+            type: "replace",
+            uris: first,
+            success: replaceResp.ok,
+            error: replaceResp.ok
+              ? null
+              : "Failed to replace playlist tracks (initial chunk)",
+          });
 
           const remaining = trackUris.slice(100);
           const chunks = chunkArray(remaining, 100);
@@ -374,13 +390,22 @@ const Spotify = {
                 body: JSON.stringify({ uris: chunk }),
               },
             );
-            if (!addResp.ok)
-              throw new Error("Failed to append playlist tracks");
+            batchResults.push({
+              type: "append",
+              uris: chunk,
+              success: addResp.ok,
+              error: addResp.ok ? null : "Failed to append playlist tracks",
+            });
           }
         }
       }
 
-      return { id: playlistId };
+      // If all batches failed, throw error
+      if (batchResults.length > 0 && batchResults.every((r) => !r.success)) {
+        throw new Error("All playlist track batches failed");
+      }
+
+      return { id: playlistId, batchResults };
     }
 
     // Create a new playlist
@@ -412,12 +437,19 @@ const Spotify = {
             body: JSON.stringify({ uris: chunk }),
           },
         );
-        if (!addResponse.ok)
-          throw new Error("Failed to add tracks to playlist");
+        batchResults.push({
+          type: "append",
+          uris: chunk,
+          success: addResponse.ok,
+          error: addResponse.ok ? null : "Failed to add tracks to playlist",
+        });
+      }
+      if (batchResults.length > 0 && batchResults.every((r) => !r.success)) {
+        throw new Error("All playlist track batches failed");
       }
     }
 
-    return { id: playlistId };
+    return { id: playlistId, batchResults };
   },
 
   // Return cached current user's id (string)
