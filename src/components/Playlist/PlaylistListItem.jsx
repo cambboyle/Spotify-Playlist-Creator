@@ -9,7 +9,7 @@ export default function PlaylistListItem({
   return (
     <li className="PlaylistListItem">
       <button type="button" onClick={() => onSelect && onSelect(id)}>
-        {name} {typeof trackCount === "number" ? `(${trackCount})` : ""}
+        {name} {typeof trackCount === "number" ? `(${trackCount}) Tracks` : ""}
       </button>
     </li>
   );

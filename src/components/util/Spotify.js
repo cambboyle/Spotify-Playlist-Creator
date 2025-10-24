@@ -430,7 +430,7 @@ const Spotify = {
                 : 0,
             ownerId: p.owner && p.owner.id ? p.owner.id : null,
             collaborative: !!p.collaborative,
-            public: typeof p.public === 'boolean' ? p.public : null,
+            public: typeof p.public === "boolean" ? p.public : null,
           }))
         );
       }
