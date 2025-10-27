@@ -268,7 +268,9 @@ const Spotify = {
     throw new Error("fetchWithRetry: exceeded max retries");
   },
 
-  async savePlaylist(name, trackUris) {
+  // savePlaylist(name, trackUris, onProgress)
+  // onProgress: optional callback(progressObj) called after each batch
+  async savePlaylist(name, trackUris, onProgress) {
     if (!name) return;
 
     const token = await this.getAccessToken();
@@ -299,6 +301,7 @@ const Spotify = {
 
     // Helper to collect batch results
     const batchResults = [];
+    let batchIndex = 0;
 
     if (maybeId) {
       const playlistId = maybeId;
@@ -337,6 +340,17 @@ const Spotify = {
             success: clearResp.ok,
             error: clearResp.ok ? null : "Failed to clear playlist tracks",
           });
+          if (typeof onProgress === "function") {
+            onProgress({
+              batchIndex,
+              totalBatches: 1,
+              type: "clear",
+              uris: [],
+              success: clearResp.ok,
+              error: clearResp.ok ? null : "Failed to clear playlist tracks",
+            });
+          }
+          batchIndex++;
         } else if (trackUris.length <= 100) {
           // Single replace
           const replaceResp = await fetchWithRetry(
@@ -355,6 +369,19 @@ const Spotify = {
             success: replaceResp.ok,
             error: replaceResp.ok ? null : "Failed to replace playlist tracks",
           });
+          if (typeof onProgress === "function") {
+            onProgress({
+              batchIndex,
+              totalBatches: 1,
+              type: "replace",
+              uris: trackUris,
+              success: replaceResp.ok,
+              error: replaceResp.ok
+                ? null
+                : "Failed to replace playlist tracks",
+            });
+          }
+          batchIndex++;
         } else {
           // Replace first 100, then append remaining in POST batches
           const first = trackUris.slice(0, 100);
@@ -376,6 +403,19 @@ const Spotify = {
               ? null
               : "Failed to replace playlist tracks (initial chunk)",
           });
+          if (typeof onProgress === "function") {
+            onProgress({
+              batchIndex,
+              totalBatches: 1 + chunks.length,
+              type: "replace",
+              uris: first,
+              success: replaceResp.ok,
+              error: replaceResp.ok
+                ? null
+                : "Failed to replace playlist tracks (initial chunk)",
+            });
+          }
+          batchIndex++;
 
           const remaining = trackUris.slice(100);
           const chunks = chunkArray(remaining, 100);
@@ -396,6 +436,17 @@ const Spotify = {
               success: addResp.ok,
               error: addResp.ok ? null : "Failed to append playlist tracks",
             });
+            if (typeof onProgress === "function") {
+              onProgress({
+                batchIndex,
+                totalBatches: 1 + chunks.length,
+                type: "append",
+                uris: chunk,
+                success: addResp.ok,
+                error: addResp.ok ? null : "Failed to append playlist tracks",
+              });
+            }
+            batchIndex++;
           }
         }
       }
@@ -443,6 +494,17 @@ const Spotify = {
           success: addResponse.ok,
           error: addResponse.ok ? null : "Failed to add tracks to playlist",
         });
+        if (typeof onProgress === "function") {
+          onProgress({
+            batchIndex,
+            totalBatches: chunks.length,
+            type: "append",
+            uris: chunk,
+            success: addResponse.ok,
+            error: addResponse.ok ? null : "Failed to add tracks to playlist",
+          });
+        }
+        batchIndex++;
       }
       if (batchResults.length > 0 && batchResults.every((r) => !r.success)) {
         throw new Error("All playlist track batches failed");
