@@ -9,6 +9,7 @@ export default function PlaylistList({ onSelect }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   // Helper to fetch playlists and cache them
   const fetchAndCachePlaylists = async () => {
@@ -71,21 +72,33 @@ export default function PlaylistList({ onSelect }) {
       {playlists.length === 0 && !loading ? (
         <div className="PlaylistList-empty">No writable playlists found.</div>
       ) : (
-        <ul>
-          {playlists.map((p) => (
-            <PlaylistListItem
-              key={p.id}
-              id={p.id}
-              name={p.name}
-              trackCount={p.trackCount}
-              selected={selectedId === p.id}
-              onSelect={(id) => {
-                setSelectedId(id);
-                if (onSelect) onSelect(id);
-              }}
-            />
-          ))}
-        </ul>
+        <>
+          <ul>
+            {playlists.slice(0, visibleCount).map((p) => (
+              <PlaylistListItem
+                key={p.id}
+                id={p.id}
+                name={p.name}
+                trackCount={p.trackCount}
+                selected={selectedId === p.id}
+                onSelect={(id) => {
+                  setSelectedId(id);
+                  if (onSelect) onSelect(id);
+                }}
+              />
+            ))}
+          </ul>
+          {visibleCount < playlists.length && (
+            <button
+              type="button"
+              className="PlaylistList-showMore"
+              style={{ marginTop: "1em" }}
+              onClick={() => setVisibleCount(visibleCount + 10)}
+            >
+              Show More
+            </button>
+          )}
+        </>
       )}
       {loading && (
         <div className="PlaylistList-loading">Loading playlists...</div>
