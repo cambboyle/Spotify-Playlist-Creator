@@ -53,7 +53,6 @@ function App() {
 
       try {
         const results = await Spotify.search(term, limit, offset);
-        cache[cacheKey] = results;
         // If this is a new search term (offset === 0), update total
         if (offset === 0) {
           setSearchTotal(results.total);
@@ -64,7 +63,21 @@ function App() {
         }
       } catch (err) {
         console.error("Search failed", err);
-        setError("Search failed. Please try again.");
+        // Enhanced error messaging for rate-limit and server errors
+        if (err && err.response && err.response.status === 429) {
+          setError(
+            "You are being rate-limited by Spotify (429). Please wait a moment and try again.",
+          );
+        } else if (
+          err &&
+          err.response &&
+          err.response.status >= 500 &&
+          err.response.status < 600
+        ) {
+          setError("Spotify server error (5xx). Please try again later.");
+        } else {
+          setError("Search failed. Please try again.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -146,7 +159,21 @@ function App() {
       })
       .catch((err) => {
         console.error("Save playlist failed", err);
-        setError("Failed to save playlist.");
+        // Enhanced error messaging for rate-limit and server errors
+        if (err && err.response && err.response.status === 429) {
+          setError(
+            "You are being rate-limited by Spotify (429). Please wait a moment and try again.",
+          );
+        } else if (
+          err &&
+          err.response &&
+          err.response.status >= 500 &&
+          err.response.status < 600
+        ) {
+          setError("Spotify server error (5xx). Please try again later.");
+        } else {
+          setError("Failed to save playlist.");
+        }
       })
       .finally(() => setIsLoading(false));
   }, [playlistName, playlistTracks, playlistId]);
@@ -166,7 +193,21 @@ function App() {
       }
     } catch (err) {
       console.error("Failed to load playlist", err);
-      setError("Failed to load selected playlist.");
+      // Enhanced error messaging for rate-limit and server errors
+      if (err && err.response && err.response.status === 429) {
+        setError(
+          "You are being rate-limited by Spotify (429). Please wait a moment and try again.",
+        );
+      } else if (
+        err &&
+        err.response &&
+        err.response.status >= 500 &&
+        err.response.status < 600
+      ) {
+        setError("Spotify server error (5xx). Please try again later.");
+      } else {
+        setError("Failed to load selected playlist.");
+      }
     } finally {
       setIsLoading(false);
     }
