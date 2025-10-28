@@ -8,6 +8,7 @@ export default function PlaylistList({ onSelect }) {
   const [playlists, setPlaylists] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   // Helper to fetch playlists and cache them
   const fetchAndCachePlaylists = async () => {
@@ -77,7 +78,11 @@ export default function PlaylistList({ onSelect }) {
               id={p.id}
               name={p.name}
               trackCount={p.trackCount}
-              onSelect={onSelect}
+              selected={selectedId === p.id}
+              onSelect={(id) => {
+                setSelectedId(id);
+                if (onSelect) onSelect(id);
+              }}
             />
           ))}
         </ul>
