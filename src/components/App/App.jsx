@@ -23,7 +23,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Search using Spotify API
+  // In-memory search result cache
+  const searchCacheRef = useRef({});
+
+  // Search using Spotify API with in-memory caching
   // search(term, limit, offset)
   const search = useCallback(
     async (term, limit = 10, offset = 0) => {
@@ -31,8 +34,26 @@ function App() {
       setError(null);
       setIsLoading(true);
       setSearchTerm(term);
+
+      // Cache key: term|limit|offset
+      const cacheKey = `${term}|${limit}|${offset}`;
+      const cache = searchCacheRef.current;
+
+      if (cache[cacheKey]) {
+        const results = cache[cacheKey];
+        if (offset === 0) {
+          setSearchTotal(results.total);
+          setSearchResults(results);
+        } else {
+          setSearchResults({ items: results.items, total: searchTotal });
+        }
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const results = await Spotify.search(term, limit, offset);
+        cache[cacheKey] = results;
         // If this is a new search term (offset === 0), update total
         if (offset === 0) {
           setSearchTotal(results.total);
@@ -48,7 +69,7 @@ function App() {
         setIsLoading(false);
       }
     },
-    [searchTotal]
+    [searchTotal],
   );
 
   // Check for token on mount (when Spotify redirects back with token in URL)
@@ -67,7 +88,7 @@ function App() {
             // Detect private/forbidden profile access and display a clearer error
             if (err && err.code === 403) {
               setError(
-                "Spotify profile access is restricted. If your account is private or has restricted visibility, make your profile visible or adjust privacy settings."
+                "Spotify profile access is restricted. If your account is private or has restricted visibility, make your profile visible or adjust privacy settings.",
               );
             } else {
               console.error("Failed to get profile", err);
@@ -102,7 +123,7 @@ function App() {
 
   const removeTrack = useCallback((track) => {
     setPlaylistTracks((prevTracks) =>
-      prevTracks.filter((currentTrack) => currentTrack.id !== track.id)
+      prevTracks.filter((currentTrack) => currentTrack.id !== track.id),
     );
     setIsDirty(true);
   }, []);
@@ -163,7 +184,7 @@ function App() {
       }
       selectPlaylist(id);
     },
-    [isDirty, selectPlaylist]
+    [isDirty, selectPlaylist],
   );
 
   const handleConfirmCancel = useCallback(() => {
