@@ -17,11 +17,10 @@ export default function PlaylistListItem({
     >
       <button
         type="button"
-        tabIndex={tabIndex}
-        aria-pressed={selected}
         onClick={() => onSelect && onSelect(id)}
         style={{
-          background: selected ? "#e0ffe0" : undefined,
+          background: selected ? "#007a4d" : undefined, // darker green for better contrast
+          color: selected ? "#fff" : undefined,
           fontWeight: selected ? "bold" : undefined,
           border: selected ? "2px solid #33cc33" : undefined,
           outline: selected ? "2px solid #33cc33" : undefined,

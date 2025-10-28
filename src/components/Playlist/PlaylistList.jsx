@@ -155,7 +155,39 @@ export default function PlaylistList({ onSelect }) {
         </>
       )}
       {loading && (
-        <div className="PlaylistList-loading">Loading playlists...</div>
+        <div
+          className="PlaylistList-loading"
+          role="status"
+          aria-live="polite"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5em",
+            color: "#222",
+            fontWeight: "bold",
+          }}
+        >
+          <span
+            style={{
+              width: "1.2em",
+              height: "1.2em",
+              border: "3px solid #33cc33",
+              borderTop: "3px solid #fff",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+              display: "inline-block",
+            }}
+          />
+          Loading playlists...
+          <style>
+            {`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}
+          </style>
+        </div>
       )}
     </div>
   );
