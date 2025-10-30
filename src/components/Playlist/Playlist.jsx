@@ -30,7 +30,23 @@ const Playlist = (props) => {
 
   return (
     <div className="Playlist">
-      <input value={props.playlistName} onChange={handleNameChange} />
+      <input
+        className="input-primary"
+        value={props.playlistName}
+        onChange={handleNameChange}
+        style={{
+          background: "var(--gray-100)",
+          color: "var(--gray-900)",
+          border: "1px solid var(--accent)",
+          borderRadius: "6px",
+          padding: "8px",
+          fontSize: "1rem",
+          marginBottom: "8px",
+          transition: "border 0.2s",
+        }}
+        onFocus={(e) => (e.target.style.border = "2px solid var(--accent)")}
+        onBlur={(e) => (e.target.style.border = "1px solid var(--accent)")}
+      />
 
       <div className="Playlist-pagination" style={{ marginBottom: "0.5rem" }}>
         <div style={{ marginBottom: "0.25rem" }}>

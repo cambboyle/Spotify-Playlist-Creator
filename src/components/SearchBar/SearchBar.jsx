@@ -33,6 +33,7 @@ const SearchBar = (props) => {
       <input
         id="search-input"
         type="search"
+        className="input-primary"
         placeholder="Search for a track"
         value={term}
         onChange={handleChange}
