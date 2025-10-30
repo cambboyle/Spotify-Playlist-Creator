@@ -7,7 +7,7 @@ const Tracklist = (props) => {
     <div className="Tracklist">
       {tracks.map((track) => {
         const isAdded = (props.playlistTracks || []).some(
-          (t) => t.id === track.id
+          (t) => t.id === track.id,
         );
         return (
           <Track

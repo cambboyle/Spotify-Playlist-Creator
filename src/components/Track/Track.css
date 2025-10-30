@@ -1,117 +1,141 @@
+:root {
+    /* Ensure variables are available in this scope */
+    --gray-100: #222;
+    --gray-200: #2c2c2c;
+    --gray-400: #444;
+    --gray-700: #bdbdbd;
+    --gray-900: #f5f5f5;
+    --accent: #00bfae;
+    --accent-coral: #ff6f61;
+    --accent-blue: #2979ff;
+    --accent-gold: #ffd600;
+    --accent-neon: #39ff14;
+}
+
 .Track {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  text-align: center;
-  border-bottom: 2px solid black;
-  padding: 10px;
-  margin-top: 5px;
-  width: 400px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    border-bottom: 2px solid var(--gray-400);
+    background: var(--gray-100);
+    padding: 10px;
+    margin-top: 5px;
+    width: 400px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+        opacity 420ms ease,
+        transform 420ms ease;
+}
+.Track.Track--mounted {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .Track-information {
-  color: red;
+    color: var(--gray-900);
 }
 
 .Image-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    overflow: hidden; /* ensure absolutely positioned children don't overflow */
 }
 
 .Track-information h3 {
-  color: rgb(5, 132, 243);
+    color: var(--accent-blue);
 }
 
 .Track-img {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  display: block;
-  border: 1px solid gray;
-  border-radius: 16px;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--gray-400);
+    border-radius: 16px;
+    background: var(--gray-200);
 }
 
 .Track-action {
-  width: 50px;
-  height: 50px;
-  border: 2px solid limegreen;
-  border-radius: 10px;
-  position: absolute;
-  top: 80%;
-  left: 80%;
-  font-size: 20px;
-}
-.Image-container {
-  overflow: hidden; /* ensure absolutely positioned children don't overflow */
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: var(--gray-200);
+    color: var(--accent);
+    transition:
+        background-color 180ms ease,
+        color 180ms ease,
+        transform 150ms ease,
+        box-shadow 150ms ease;
+    cursor: pointer;
 }
 
-.Track-action {
-  width: 50px;
-  height: 50px;
-  border: 2px solid limegreen;
-  border-radius: 10px;
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  background: transparent;
+.Track-action.button-secondary {
+    background: var(--gray-200);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+}
+
+.Track-action.button-primary {
+    background: var(--accent);
+    color: var(--gray-100);
+    border: none;
 }
 
 .Track-action--added {
-  background-color: #28a745; /* green */
-  color: white;
-  border: none;
-  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
-}
-
-.Track-action,
-.Track-action--added {
-  transition: background-color 180ms ease, transform 150ms ease,
-    box-shadow 150ms ease;
+    background-color: var(--accent);
+    color: var(--gray-100);
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 191, 174, 0.4);
 }
 
 .Track-action:active,
 .Track-action--added:active {
-  transform: translateY(1px) scale(0.98);
+    transform: translateY(1px) scale(0.98);
 }
 
 /* pending state shows a subtle pulse */
 .Track-action[aria-pressed="false"]:not(.Track-action--added) {
-  transition: box-shadow 200ms ease;
+    transition: box-shadow 200ms ease;
 }
 .Track-action[aria-pressed="false"]:not(.Track-action--added).pending {
-  box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 0 0 6px rgba(0, 191, 174, 0.08);
 }
-
-/* mount animation */
-.Track {
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 420ms ease, transform 420ms ease;
-}
-.Track.Track--mounted {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* animate out when a track is being removed from search results */
-/* removed: Track--removing styles no longer used */
 
 /* spinner inside the button */
 .Track-spinner {
-  animation: spin 900ms linear infinite;
-  color: white;
+    animation: spin 900ms linear infinite;
+    color: var(--gray-100);
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.Track:nth-child(even) {
+    background: var(--gray-200);
+}
+.Track:nth-child(odd) {
+    background: var(--gray-100);
+}
+
+/* Accessibility: focus state for action button */
+.Track-action:focus {
+    outline: 2px solid var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
 }
