@@ -61,7 +61,7 @@ export default function PlaylistList({ onSelect }) {
 
   return (
     <div className="PlaylistList">
-      <h3>Select Playlists</h3>
+      <h3 style={{ color: "var(--gray-900)" }}>Select Playlists</h3>
       <button
         type="button"
         className="button-primary"
@@ -72,7 +72,12 @@ export default function PlaylistList({ onSelect }) {
         {loading ? "Refreshing..." : "Refresh"}
       </button>
       {playlists.length === 0 && !loading ? (
-        <div className="PlaylistList-empty">No writable playlists found.</div>
+        <div
+          className="PlaylistList-empty"
+          style={{ color: "var(--gray-700)" }}
+        >
+          No writable playlists found.
+        </div>
       ) : (
         <>
           <ul
@@ -80,6 +85,11 @@ export default function PlaylistList({ onSelect }) {
             role="listbox"
             aria-label="Playlist list"
             tabIndex={0}
+            style={{
+              background: "var(--gray-200)",
+              borderRadius: "8px",
+              padding: "8px 0",
+            }}
             onKeyDown={(e) => {
               const visible = playlists.slice(0, visibleCount);
               const currentIdx = visible.findIndex((p) => p.id === selectedId);
@@ -164,7 +174,7 @@ export default function PlaylistList({ onSelect }) {
             display: "flex",
             alignItems: "center",
             gap: "0.5em",
-            color: "#222",
+            color: "var(--gray-900)",
             fontWeight: "bold",
           }}
         >
@@ -172,8 +182,8 @@ export default function PlaylistList({ onSelect }) {
             style={{
               width: "1.2em",
               height: "1.2em",
-              border: "3px solid #33cc33",
-              borderTop: "3px solid #fff",
+              border: "3px solid var(--accent)",
+              borderTop: "3px solid var(--accent-coral)",
               borderRadius: "50%",
               animation: "spin 1s linear infinite",
               display: "inline-block",
