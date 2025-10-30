@@ -45,7 +45,7 @@ const Track = ({
   const renderAction = () => {
     if (isRemoval) {
       return (
-        <button className="Track-action" onClick={removeTrack}>
+        <button className="Track-action button-secondary" onClick={removeTrack}>
           -
         </button>
       );
@@ -66,14 +66,12 @@ const Track = ({
     const ariaLabel = added
       ? "Added to playlist"
       : pending
-      ? "Adding to playlist"
-      : "Add to playlist";
+        ? "Adding to playlist"
+        : "Add to playlist";
 
     return (
       <button
-        className={`Track-action ${added ? "Track-action--added" : ""} ${
-          pending ? "pending" : ""
-        }`}
+        className={`Track-action button-primary${added ? " Track-action--added" : ""}${pending ? " pending" : ""}`}
         onClick={onClick}
         aria-pressed={added}
         aria-label={ariaLabel}

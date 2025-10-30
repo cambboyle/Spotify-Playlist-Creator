@@ -64,6 +64,7 @@ export default function PlaylistList({ onSelect }) {
       <h3>Select Playlists</h3>
       <button
         type="button"
+        className="button-primary"
         onClick={handleRefresh}
         disabled={loading}
         style={{ marginBottom: "1em" }}
@@ -145,7 +146,7 @@ export default function PlaylistList({ onSelect }) {
           {visibleCount < playlists.length && (
             <button
               type="button"
-              className="PlaylistList-showMore"
+              className="button-secondary PlaylistList-showMore"
               style={{ marginTop: "1em" }}
               onClick={() => setVisibleCount(visibleCount + 10)}
             >

@@ -254,6 +254,7 @@ function App() {
               <div>Connected as {userDisplayName || "Spotify user"}</div>
               <button
                 type="button"
+                className="button-primary"
                 onClick={() => {
                   Spotify.logout();
                   setUserDisplayName(null);
@@ -264,7 +265,11 @@ function App() {
               </button>
             </div>
           ) : (
-            <button type="button" onClick={() => Spotify.authorize()}>
+            <button
+              type="button"
+              className="button-primary"
+              onClick={() => Spotify.authorize()}
+            >
               Connect to Spotify
             </button>
           )}

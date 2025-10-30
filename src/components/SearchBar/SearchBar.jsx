@@ -14,7 +14,7 @@ const SearchBar = (props) => {
         if (props.onSearch) props.onSearch(value.trim());
       }, 400);
     },
-    [props]
+    [props],
   );
 
   const handleSearch = useCallback(
@@ -22,7 +22,7 @@ const SearchBar = (props) => {
       e.preventDefault();
       if (props.onSearch) props.onSearch(term.trim());
     },
-    [props, term]
+    [props, term],
   );
 
   return (
@@ -39,7 +39,7 @@ const SearchBar = (props) => {
         aria-label="Search"
         disabled={isLoading}
       />
-      <button type="submit" disabled={isLoading}>
+      <button type="submit" className="button-primary" disabled={isLoading}>
         {isLoading ? "Loading..." : "Search"}
       </button>
     </form>

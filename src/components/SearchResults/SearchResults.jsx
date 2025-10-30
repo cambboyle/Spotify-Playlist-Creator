@@ -37,48 +37,57 @@ const SearchResults = ({
   return (
     <div>
       <h2>Results</h2>
-      <div style={{ marginBottom: "0.5em" }}>
+      <div className="SearchResults-show" style={{ marginBottom: "0.5em" }}>
         <button
+          className={`button-secondary${shown === 10 ? " button-disabled" : ""}`}
           disabled={isLoading || shown === 10}
           onClick={() => handleShowMore(10)}
         >
           Show 10
         </button>
         <button
+          className={`button-secondary${shown === 50 ? " button-disabled" : ""}`}
           disabled={isLoading || shown === 50}
           onClick={() => handleShowMore(50)}
         >
           Show 50
         </button>
-        <span style={{ marginLeft: "1em" }}>
+        <span className="SearchResults-count" style={{ marginLeft: "1em" }}>
           {total === 0
             ? "No results"
-            : `Showing ${startIdx}–${endIdx} of ${total} results`}
+            : `Showing ${startIdx}\u2013${endIdx} of ${total} results`}
         </span>
       </div>
-      <div style={{ marginBottom: "0.5em" }}>
+      <div
+        className="SearchResults-pagination"
+        style={{ marginBottom: "0.5em" }}
+      >
         <button
+          className={`button-secondary${page <= 1 ? " button-disabled" : ""}`}
           disabled={isLoading || page <= 1}
           onClick={() => handlePageChange(1)}
         >
           First
         </button>
         <button
+          className={`button-secondary${page <= 1 ? " button-disabled" : ""}`}
           disabled={isLoading || page <= 1}
           onClick={() => handlePageChange(page - 1)}
         >
           Previous
         </button>
-        <span style={{ margin: "0 1em" }}>
+        <span className="SearchResults-page" style={{ margin: "0 1em" }}>
           Page {page} of {lastPage}
         </span>
         <button
+          className={`button-secondary${page >= lastPage ? " button-disabled" : ""}`}
           disabled={isLoading || page >= lastPage}
           onClick={() => handlePageChange(page + 1)}
         >
           Next
         </button>
         <button
+          className={`button-secondary${page >= lastPage ? " button-disabled" : ""}`}
           disabled={isLoading || page >= lastPage}
           onClick={() => handlePageChange(lastPage)}
         >

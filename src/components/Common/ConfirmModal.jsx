@@ -15,10 +15,10 @@ export default function ConfirmModal({
         {title && <h3>{title}</h3>}
         <p>{message}</p>
         <div className="ConfirmModal-actions">
-          <button type="button" onClick={onCancel}>
+          <button type="button" className="button-secondary" onClick={onCancel}>
             Cancel
           </button>
-          <button type="button" onClick={onConfirm}>
+          <button type="button" className="button-primary" onClick={onConfirm}>
             Continue
           </button>
         </div>

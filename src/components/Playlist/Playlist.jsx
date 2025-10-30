@@ -15,7 +15,7 @@ const Playlist = (props) => {
     (event) => {
       onNameChange(event.target.value);
     },
-    [onNameChange]
+    [onNameChange],
   );
 
   const total = (props.playlistTracks || []).length;
@@ -25,7 +25,7 @@ const Playlist = (props) => {
 
   const displayedTracks = (props.playlistTracks || []).slice(
     (page - 1) * shown,
-    page * shown
+    page * shown,
   );
 
   return (
@@ -34,10 +34,15 @@ const Playlist = (props) => {
 
       <div className="Playlist-pagination" style={{ marginBottom: "0.5rem" }}>
         <div style={{ marginBottom: "0.25rem" }}>
-          <button disabled={page <= 1} onClick={() => setPage(1)}>
+          <button
+            className="button-secondary"
+            disabled={page <= 1}
+            onClick={() => setPage(1)}
+          >
             First
           </button>
           <button
+            className="button-secondary"
             disabled={page <= 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
           >
@@ -47,12 +52,17 @@ const Playlist = (props) => {
             Page {page} of {lastPage}
           </span>
           <button
+            className="button-secondary"
             disabled={page >= lastPage}
             onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
           >
             Next
           </button>
-          <button disabled={page >= lastPage} onClick={() => setPage(lastPage)}>
+          <button
+            className="button-secondary"
+            disabled={page >= lastPage}
+            onClick={() => setPage(lastPage)}
+          >
             Last
           </button>
         </div>
@@ -87,7 +97,7 @@ const Playlist = (props) => {
       />
 
       <button
-        className="playlist-save"
+        className="button-primary playlist-save"
         onClick={props.onSave}
         disabled={
           isLoading ||
