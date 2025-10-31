@@ -118,10 +118,16 @@
 /* Search Results Grid */
 .SearchResults-tracklist {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: 1fr;
     gap: 16px;
     margin-top: 8px;
     width: 100%;
+}
+
+@media (min-width: 900px) {
+    .SearchResults-tracklist {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .SearchResults-trackcard {
@@ -528,8 +534,9 @@ input:focus {
 }
 
 .PlaylistTracklist-action {
-    margin-left: 10px;
+    margin-left: auto;
     flex-shrink: 0;
+    align-self: center;
 }
 
 /* Responsive adjustments */
