@@ -285,6 +285,25 @@ function App() {
             {error}
           </div>
         )}
+        <section className="AppSection AppSection--tracks">
+          <h2 className="AppSection-title">Track Preview</h2>
+          <div className="TrackTest">
+            <Track />
+            <Track />
+            <Track />
+          </div>
+        </section>
+        <section className="AppSection AppSection--results">
+          <h2 className="AppSection-title">Search Results</h2>
+          <SearchResults
+            searchTerm={searchTerm}
+            onSearch={search}
+            searchResults={searchResults}
+            onAdd={addTrack}
+            playlistTracks={playlistTracks}
+            isLoading={isLoading}
+          />
+        </section>
         <section className="AppSection AppSection--playlist">
           <div className="App-playlistGrid">
             <div className="App-playlistList">
@@ -302,25 +321,6 @@ function App() {
                 isLoading={isLoading}
               />
             </div>
-          </div>
-        </section>
-        <section className="AppSection AppSection--results">
-          <h2 className="AppSection-title">Search Results</h2>
-          <SearchResults
-            searchTerm={searchTerm}
-            onSearch={search}
-            searchResults={searchResults}
-            onAdd={addTrack}
-            playlistTracks={playlistTracks}
-            isLoading={isLoading}
-          />
-        </section>
-        <section className="AppSection AppSection--tracks">
-          <h2 className="AppSection-title">Track Preview</h2>
-          <div className="TrackTest">
-            <Track />
-            <Track />
-            <Track />
           </div>
         </section>
         <ConfirmModal

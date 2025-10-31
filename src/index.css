@@ -79,7 +79,7 @@
     margin-bottom: 32px;
     background: var(--gray-200);
     border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--gray-400);
     padding: 24px;
 }
 
@@ -101,16 +101,18 @@
 .App-playlistContent {
     background: var(--gray-200);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--gray-400);
     padding: 16px;
 }
 
 .TrackTest {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 24px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    justify-items: center;
+    align-items: stretch;
     margin-top: 16px;
+    width: 100%;
 }
 
 .AppFooter {
@@ -141,6 +143,7 @@
         gap: 16px;
     }
     .TrackTest {
+        grid-template-columns: 1fr;
         gap: 12px;
     }
     .AppHeader {
@@ -391,7 +394,6 @@ input:focus {
 .card {
     background: var(--gray-200);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
     padding: 16px;
     margin-bottom: 16px;
     color: var(--gray-900);
