@@ -241,6 +241,9 @@ function App() {
     selectPlaylist(id);
   }, [pendingSelectId, selectPlaylist]);
 
+  // Track Preview toggle state
+  const [showPreview, setShowPreview] = useState(true);
+
   return (
     <div className="AppLayout">
       <header className="AppHeader">
@@ -285,14 +288,23 @@ function App() {
             {error}
           </div>
         )}
-        <section className="AppSection AppSection--tracks">
-          <h2 className="AppSection-title">Track Preview</h2>
-          <div className="TrackTest">
-            <Track />
-            <Track />
-            <Track />
-          </div>
-        </section>
+        <button
+          className="button-secondary"
+          onClick={() => setShowPreview((prev) => !prev)}
+          style={{ marginBottom: "1em" }}
+        >
+          {showPreview ? "Hide Track Preview" : "Show Track Preview"}
+        </button>
+        {showPreview && (
+          <section className="AppSection AppSection--tracks">
+            <h2 className="AppSection-title">Track Preview</h2>
+            <div className="TrackTest">
+              <Track />
+              <Track />
+              <Track />
+            </div>
+          </section>
+        )}
         <section className="AppSection AppSection--results">
           <h2 className="AppSection-title">Search Results</h2>
           <SearchResults
