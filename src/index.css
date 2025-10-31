@@ -115,6 +115,72 @@
     width: 100%;
 }
 
+/* Search Results Grid */
+.SearchResults-tracklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.SearchResults-trackcard {
+    display: flex;
+    align-items: center;
+    background: var(--gray-200);
+    border-radius: 8px;
+    border: 1px solid var(--gray-400);
+    padding: 8px 12px;
+    gap: 16px;
+    min-height: 64px;
+    transition: background 0.2s;
+}
+
+.SearchResults-trackcard:hover,
+.SearchResults-trackcard:focus-within {
+    background: var(--gray-100);
+}
+
+.SearchResults-trackimg {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: var(--gray-400);
+    border: 1px solid var(--gray-400);
+    flex-shrink: 0;
+}
+
+.SearchResults-trackinfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.SearchResults-trackname {
+    font-size: 1rem;
+    color: var(--gray-900);
+    font-weight: bold;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SearchResults-trackmeta {
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SearchResults-trackaction {
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
 .AppFooter {
     width: 100%;
     background: var(--gray-200);
@@ -398,6 +464,72 @@ input:focus {
     margin-bottom: 16px;
     color: var(--gray-900);
     border: 1px solid var(--gray-400);
+    box-shadow: none;
+}
+
+/* Compact playlist tracklist styles */
+.PlaylistTracklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.PlaylistTracklist-row {
+    display: flex;
+    align-items: center;
+    background: var(--gray-200);
+    border-radius: 6px;
+    border: 1px solid var(--gray-400);
+    padding: 6px 10px;
+    gap: 12px;
+    min-height: 48px;
+    transition: background 0.2s;
+}
+
+.PlaylistTracklist-row:hover,
+.PlaylistTracklist-row:focus-within {
+    background: var(--gray-100);
+}
+
+.PlaylistTracklist-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: var(--gray-400);
+    border: 1px solid var(--gray-400);
+    flex-shrink: 0;
+}
+
+.PlaylistTracklist-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.PlaylistTracklist-name {
+    font-size: 0.98rem;
+    color: var(--gray-900);
+    font-weight: bold;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.PlaylistTracklist-meta {
+    font-size: 0.93rem;
+    color: var(--gray-700);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.PlaylistTracklist-action {
+    margin-left: 10px;
+    flex-shrink: 0;
 }
 
 /* Responsive adjustments */

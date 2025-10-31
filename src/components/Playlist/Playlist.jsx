@@ -105,12 +105,47 @@ const Playlist = (props) => {
         </div>
       </div>
 
-      <Tracklist
-        tracks={displayedTracks}
-        isRemoval={true}
-        onRemove={props.onRemove}
-        playlistTracks={props.playlistTracks}
-      />
+      <ul className="PlaylistTracklist">
+        {displayedTracks.map((track) => (
+          <li key={track.id} className="PlaylistTracklist-row">
+            <img
+              src={
+                track.albumImages?.[2]?.url ||
+                track.albumImages?.[1]?.url ||
+                track.albumImages?.[0]?.url ||
+                (track.album && track.album.images && track.album.images[2]
+                  ? track.album.images[2].url
+                  : null)
+              }
+              alt={`${track.name} album art`}
+              className="PlaylistTracklist-img"
+              width={48}
+              height={48}
+              style={{
+                borderRadius: "8px",
+                marginRight: "12px",
+                objectFit: "cover",
+                background: "var(--gray-400)",
+                border: "1px solid var(--gray-400)",
+              }}
+            />
+            <div className="PlaylistTracklist-info">
+              <div className="PlaylistTracklist-title">{track.name}</div>
+              <div className="PlaylistTracklist-meta">
+                <span>{track.artist}</span> &mdash; <span>{track.album}</span>
+              </div>
+            </div>
+            <button
+              className="Track-action button-secondary"
+              onClick={() => props.onRemove(track)}
+              aria-label={`Remove ${track.name} from playlist`}
+              style={{ marginLeft: "auto" }}
+            >
+              &minus;
+            </button>
+          </li>
+        ))}
+      </ul>
 
       <button
         className="button-primary playlist-save"
