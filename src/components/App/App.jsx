@@ -242,16 +242,17 @@ function App() {
   }, [pendingSelectId, selectPlaylist]);
 
   return (
-    <div>
-      <h1>
-        Ja<span className="highlight">mmm</span>ing
-      </h1>
-      <div className="App">
-        <SearchBar onSearch={search} />
-        <div>
+    <div className="AppLayout">
+      <header className="AppHeader">
+        <h1>
+          Ja<span className="highlight">mmm</span>ing
+        </h1>
+        <div className="AppHeader-user">
           {isConnected ? (
             <div>
-              <div>Connected as {userDisplayName || "Spotify user"}</div>
+              <span className="AppHeader-userName">
+                Connected as {userDisplayName || "Spotify user"}
+              </span>
               <button
                 type="button"
                 className="button-primary"
@@ -274,17 +275,37 @@ function App() {
             </button>
           )}
         </div>
+      </header>
+      <main className="AppMain">
+        <section className="AppSection AppSection--search">
+          <SearchBar onSearch={search} />
+        </section>
         {error && (
           <div className="App-error" role="alert">
             {error}
           </div>
         )}
-        <div className="TrackTest">
-          <Track />
-          <Track />
-          <Track />
-        </div>
-        <div className="App-playlist">
+        <section className="AppSection AppSection--playlist">
+          <div className="App-playlistGrid">
+            <div className="App-playlistList">
+              <h2 className="AppSection-title">Your Playlists</h2>
+              <PlaylistList onSelect={attemptSelectPlaylist} />
+            </div>
+            <div className="App-playlistContent">
+              <h2 className="AppSection-title">Playlist Editor</h2>
+              <Playlist
+                playlistName={playlistName}
+                playlistTracks={playlistTracks}
+                onNameChange={updatePlaylistName}
+                onRemove={removeTrack}
+                onSave={savePlaylist}
+                isLoading={isLoading}
+              />
+            </div>
+          </div>
+        </section>
+        <section className="AppSection AppSection--results">
+          <h2 className="AppSection-title">Search Results</h2>
           <SearchResults
             searchTerm={searchTerm}
             onSearch={search}
@@ -293,24 +314,26 @@ function App() {
             playlistTracks={playlistTracks}
             isLoading={isLoading}
           />
-          <PlaylistList onSelect={attemptSelectPlaylist} />
-          <Playlist
-            playlistName={playlistName}
-            playlistTracks={playlistTracks}
-            onNameChange={updatePlaylistName}
-            onRemove={removeTrack}
-            onSave={savePlaylist}
-            isLoading={isLoading}
-          />
-          <ConfirmModal
-            isOpen={isConfirmOpen}
-            title="Discard changes?"
-            message="You have unsaved changes. If you continue, your edits will be lost."
-            onCancel={handleConfirmCancel}
-            onConfirm={handleConfirmContinue}
-          />
-        </div>
-      </div>
+        </section>
+        <section className="AppSection AppSection--tracks">
+          <h2 className="AppSection-title">Track Preview</h2>
+          <div className="TrackTest">
+            <Track />
+            <Track />
+            <Track />
+          </div>
+        </section>
+        <ConfirmModal
+          isOpen={isConfirmOpen}
+          title="Discard changes?"
+          message="You have unsaved changes. If you continue, your edits will be lost."
+          onCancel={handleConfirmCancel}
+          onConfirm={handleConfirmContinue}
+        />
+      </main>
+      <footer className="AppFooter">
+        © 2024 Jamming &mdash; Built with React & Spotify API
+      </footer>
     </div>
   );
 }

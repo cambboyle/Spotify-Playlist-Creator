@@ -1,5 +1,5 @@
 :root {
-    /* Grayscale palette for dark mode */
+    /* Grayscale palette */
     --gray-100: #222; /* Deep background */
     --gray-200: #2c2c2c; /* Card, modal surface */
     --gray-400: #444; /* Borders, muted UI */
@@ -14,6 +14,141 @@
     --accent-neon: #39ff14;
     --accent-error: var(--accent-coral);
     --accent-success: #009688;
+}
+
+/* Layout styles for professional app structure */
+.AppLayout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(
+        135deg,
+        var(--gray-100) 0%,
+        var(--gray-200) 100%
+    );
+}
+
+.AppHeader {
+    width: 100%;
+    background: var(--gray-200);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    padding: 24px 0 16px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid var(--gray-400);
+    position: relative;
+    z-index: 10;
+}
+
+.AppHeader h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0, 191, 174, 0.08);
+}
+
+.AppHeader-user {
+    margin-top: 8px;
+    color: var(--gray-700);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.AppHeader-userName {
+    font-weight: bold;
+    color: var(--gray-900);
+}
+
+.AppMain {
+    flex: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.AppSection {
+    margin-bottom: 32px;
+    background: var(--gray-200);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+    padding: 24px;
+}
+
+.AppSection-title {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.App-playlistGrid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px;
+}
+
+.App-playlistList,
+.App-playlistContent {
+    background: var(--gray-200);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    padding: 16px;
+}
+
+.TrackTest {
+    display: flex;
+    gap: 24px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.AppFooter {
+    width: 100%;
+    background: var(--gray-200);
+    color: var(--gray-700);
+    text-align: center;
+    padding: 20px 0 16px 0;
+    font-size: 1rem;
+    border-top: 1px solid var(--gray-400);
+    margin-top: auto;
+    letter-spacing: 1px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Responsive adjustments for layout */
+@media (max-width: 900px) {
+    .AppMain {
+        max-width: 100%;
+        padding: 16px 4px 16px 4px;
+    }
+    .AppSection {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .App-playlistGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .TrackTest {
+        gap: 12px;
+    }
+    .AppHeader {
+        padding: 16px 0 8px 0;
+    }
+    .AppFooter {
+        padding: 12px 0 8px 0;
+    }
 }
 
 html,
@@ -108,16 +243,25 @@ button:disabled,
 
 /* Error message */
 .error-message {
+    background: var(--gray-200);
     color: var(--accent-error);
     font-weight: bold;
     margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--accent-error);
+    box-shadow: 0 2px 8px rgba(255, 111, 97, 0.08);
 }
 
-/* Success message */
 .success-message {
+    background: var(--gray-200);
     color: var(--accent-success);
     font-weight: bold;
     margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--accent-success);
+    box-shadow: 0 2px 8px rgba(0, 150, 136, 0.08);
 }
 
 /* Input styles */
@@ -182,6 +326,8 @@ input:focus {
     animation: spin 1s linear infinite;
     display: inline-block;
     vertical-align: middle;
+    background: var(--gray-200);
+    box-shadow: 0 2px 8px rgba(0, 191, 174, 0.12);
 }
 
 @keyframes spin {
