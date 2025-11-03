@@ -131,7 +131,8 @@ const Track = ({
         padding: "16px 20px",
         boxShadow: "0 2px 8px rgba(245, 130, 174, 0.04)",
         transition: "box-shadow 0.22s, border-color 0.22s, transform 0.18s",
-        width: "100%",
+        width: "340px",
+        minWidth: "0",
         boxSizing: "border-box",
       }}
       onMouseOver={(e) => {
@@ -148,12 +149,21 @@ const Track = ({
     >
       {imageUrl ? (
         <img
-          src={imageUrl}
+          src={
+            safeTrack?.image ||
+            safeTrack?.albumImages?.[1]?.url ||
+            safeTrack?.albumImages?.[0]?.url ||
+            (safeTrack?.album &&
+            safeTrack.album.images &&
+            safeTrack.album.images[1]
+              ? safeTrack.album.images[1].url
+              : null)
+          }
           alt={`${safeTrack?.name} album art`}
           style={{
-            width: "56px",
-            height: "56px",
-            borderRadius: "12px",
+            width: "96px",
+            height: "96px",
+            borderRadius: "14px",
             objectFit: "cover",
             background: "var(--color-background)",
             border: "2px solid var(--color-stroke)",
