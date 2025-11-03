@@ -105,9 +105,41 @@ const Playlist = (props) => {
         </div>
       </div>
 
+      <div
+        className="PlaylistTracklist-header"
+        style={{
+          marginBottom: "12px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span
+          style={{
+            fontWeight: "bold",
+            color: "var(--accent)",
+            fontSize: "1.1rem",
+          }}
+        >
+          Tracks in Playlist ({displayedTracks.length})
+        </span>
+      </div>
       <ul className="PlaylistTracklist">
-        {displayedTracks.map((track) => (
-          <li key={track.id} className="PlaylistTracklist-row">
+        {displayedTracks.map((track, idx) => (
+          <li
+            key={track.id}
+            className="PlaylistTracklist-row"
+            style={{
+              borderBottom:
+                idx < displayedTracks.length - 1
+                  ? "1px solid var(--gray-400)"
+                  : "none",
+              paddingBottom: "8px",
+              paddingTop: "8px",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
             <img
               src={
                 track.albumImages?.[2]?.url ||
@@ -123,23 +155,71 @@ const Playlist = (props) => {
               height={48}
               style={{
                 borderRadius: "8px",
-                marginRight: "12px",
+                marginRight: "14px",
                 objectFit: "cover",
                 background: "var(--gray-400)",
                 border: "1px solid var(--gray-400)",
+                flexShrink: 0,
               }}
             />
-            <div className="PlaylistTracklist-info">
-              <div className="PlaylistTracklist-title">{track.name}</div>
-              <div className="PlaylistTracklist-meta">
+            <div
+              className="PlaylistTracklist-info"
+              style={{ flex: 1, minWidth: 0 }}
+            >
+              <div
+                className="PlaylistTracklist-title"
+                style={{
+                  fontWeight: "bold",
+                  color: "var(--gray-900)",
+                  fontSize: "1rem",
+                  marginBottom: "2px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {track.name}
+              </div>
+              <div
+                className="PlaylistTracklist-meta"
+                style={{
+                  fontSize: "0.95rem",
+                  color: "var(--gray-700)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
                 <span>{track.artist}</span> &mdash; <span>{track.album}</span>
               </div>
             </div>
             <button
-              className="Track-action button-secondary"
+              className="PlaylistTracklist-action button-secondary"
               onClick={() => props.onRemove(track)}
               aria-label={`Remove ${track.name} from playlist`}
-              style={{ marginLeft: "auto" }}
+              style={{
+                marginLeft: "auto",
+                borderRadius: "50%",
+                width: "32px",
+                height: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.3rem",
+                border: "2px solid var(--accent)",
+                background: "var(--gray-200)",
+                color: "var(--accent)",
+                cursor: "pointer",
+                transition: "background 0.2s, color 0.2s, border 0.2s",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "var(--accent)";
+                e.currentTarget.style.color = "var(--gray-100)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "var(--gray-200)";
+                e.currentTarget.style.color = "var(--accent)";
+              }}
             >
               &minus;
             </button>
