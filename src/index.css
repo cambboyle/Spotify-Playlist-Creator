@@ -323,6 +323,8 @@ button,
     box-shadow: 0 2px 8px rgba(245, 130, 174, 0.04);
     padding: 12px 28px;
     margin: 6px 0;
+    background: var(--color-button);
+    color: var(--color-button-text);
 }
 
 button:hover,
@@ -341,6 +343,8 @@ button:hover,
 button:active,
 .button-primary:active,
 .button-secondary:active {
+    background: var(--color-button);
+    color: var(--color-button-text);
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(245, 130, 174, 0.08);
 }
