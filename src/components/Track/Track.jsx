@@ -119,7 +119,7 @@ const Track = ({
   }, []);
 
   return (
-    <li
+    <div
       className={`Track Tracklist-row ${mounted ? "Track--mounted" : ""}`}
       style={{
         display: "flex",
@@ -205,7 +205,7 @@ const Track = ({
       >
         {renderAction()}
       </div>
-    </li>
+    </div>
   );
 };
 
