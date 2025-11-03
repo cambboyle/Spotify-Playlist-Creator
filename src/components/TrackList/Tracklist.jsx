@@ -10,7 +10,7 @@ const Tracklist = (props) => {
           (t) => t.id === track.id,
         );
         return (
-          <li key={track.id} className="Tracklist-row">
+          <li key={track.id}>
             <Track
               track={track}
               isAdded={isAdded}

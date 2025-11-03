@@ -127,10 +127,12 @@ const Track = ({
         background: "var(--color-card-bg)",
         borderRadius: "16px",
         border: "2px solid var(--color-stroke)",
-        marginBottom: "18px",
+        marginBottom: "0",
         padding: "16px 20px",
         boxShadow: "0 2px 8px rgba(245, 130, 174, 0.04)",
         transition: "box-shadow 0.22s, border-color 0.22s, transform 0.18s",
+        width: "100%",
+        boxSizing: "border-box",
       }}
       onMouseOver={(e) => {
         e.currentTarget.style.boxShadow =
