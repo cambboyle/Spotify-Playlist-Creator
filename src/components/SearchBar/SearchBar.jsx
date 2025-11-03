@@ -26,24 +26,32 @@ const SearchBar = (props) => {
   );
 
   return (
-    <form onSubmit={handleSearch}>
-      <label htmlFor="search-input" className="visually-hidden">
-        Search
-      </label>
-      <input
-        id="search-input"
-        type="search"
-        className="input-primary"
-        placeholder="Search for a track"
-        value={term}
-        onChange={handleChange}
-        aria-label="Search"
-        disabled={isLoading}
-      />
-      <button type="submit" className="button-primary" disabled={isLoading}>
-        {isLoading ? "Loading..." : "Search"}
-      </button>
-    </form>
+    <div className="SearchBar-container">
+      <form className="SearchBar-form" onSubmit={handleSearch}>
+        <label htmlFor="search-input" className="visually-hidden">
+          Search
+        </label>
+        <div className="SearchBar-row">
+          <input
+            id="search-input"
+            type="search"
+            className="input-primary SearchBar-input"
+            placeholder="Search for a track"
+            value={term}
+            onChange={handleChange}
+            aria-label="Search"
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            className="button-primary SearchBar-button"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Search"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
