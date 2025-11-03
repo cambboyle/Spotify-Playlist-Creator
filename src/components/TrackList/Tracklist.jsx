@@ -10,7 +10,7 @@ const Tracklist = (props) => {
           (t) => t.id === track.id,
         );
         return (
-          <li key={track.id}>
+          <li key={track.id} style={{ listStyle: "none" }}>
             <Track
               track={track}
               isAdded={isAdded}
