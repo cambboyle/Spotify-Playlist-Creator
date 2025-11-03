@@ -14,6 +14,7 @@
     --color-card-alt: #8bd3dd;        /* Light blue for alt containers */
     --color-error: #f582ae;           /* Pink for errors */
     --color-success: #8bd3dd;         /* Light blue for success */
+    --color-button-hover: #e06c9f;    /* Slightly darker pink for button hover */
 }
 
 /* Layout styles for professional app structure */
@@ -332,11 +333,11 @@ button:hover,
 .button-primary:focus,
 .button-secondary:hover,
 .button-secondary:focus {
-    background: var(--color-button);
+    background: var(--color-button-hover);
     color: var(--color-button-text);
-    outline: 2px solid var(--color-button);
-    border: 2px solid var(--color-button);
-    box-shadow: 0 4px 16px rgba(245, 130, 174, 0.12);
+    outline: 2px solid var(--color-button-hover);
+    border: 2px solid var(--color-button-hover);
+    box-shadow: 0 4px 16px rgba(224, 108, 159, 0.14);
     transform: scale(1.04);
 }
 
