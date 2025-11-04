@@ -123,17 +123,17 @@ const Track = ({
       className={`Track Tracklist-row ${mounted ? "Track--mounted" : ""}`}
       style={{
         display: "flex",
-        alignItems: "center",
+        flexDirection: "column",
+        alignItems: "flex-start",
         background: "var(--color-card-bg)",
-        borderRadius: "16px",
+        borderRadius: "18px",
         border: "2px solid var(--color-stroke)",
-        marginBottom: "0",
-        padding: "16px 20px",
         boxShadow: "0 2px 8px rgba(245, 130, 174, 0.04)",
-        transition: "box-shadow 0.22s, border-color 0.22s, transform 0.18s",
-        width: "50%",
-        minWidth: "0",
+        padding: "24px 20px",
+        width: "100%",
+        minWidth: 0,
         boxSizing: "border-box",
+        overflow: "hidden",
       }}
       onMouseOver={(e) => {
         e.currentTarget.style.boxShadow =
@@ -151,12 +151,11 @@ const Track = ({
         <img
           src={
             safeTrack?.image ||
-            safeTrack?.albumImages?.[1]?.url ||
             safeTrack?.albumImages?.[0]?.url ||
             (safeTrack?.album &&
             safeTrack.album.images &&
-            safeTrack.album.images[1]
-              ? safeTrack.album.images[1].url
+            safeTrack.album.images[0]
+              ? safeTrack.album.images[0].url
               : null)
           }
           alt={`${safeTrack?.name} album art`}
@@ -167,29 +166,28 @@ const Track = ({
             objectFit: "cover",
             background: "var(--color-background)",
             border: "2px solid var(--color-stroke)",
-            marginRight: "18px",
+            marginBottom: "18px",
             flexShrink: 0,
           }}
         />
       ) : null}
       <div
         style={{
-          flex: 1,
+          width: "100%",
           minWidth: 0,
           display: "flex",
           flexDirection: "column",
-          gap: "2px",
+          gap: "8px",
+          marginBottom: "12px",
         }}
       >
         <span
           style={{
             fontWeight: "bold",
             color: "var(--color-headline)",
-            fontSize: "1.08rem",
+            fontSize: "1.18rem",
             marginBottom: "2px",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
+            wordBreak: "break-word",
             fontFamily: "'Inter', 'Nunito', Arial, sans-serif",
           }}
         >
@@ -197,11 +195,9 @@ const Track = ({
         </span>
         <span
           style={{
-            fontSize: "0.98rem",
+            fontSize: "1rem",
             color: "var(--color-paragraph)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
+            wordBreak: "break-word",
             fontFamily: "'Inter', 'Nunito', Arial, sans-serif",
           }}
         >
