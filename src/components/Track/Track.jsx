@@ -132,7 +132,6 @@ const Track = ({
         width: "340px",
         minWidth: "0",
         minHeight: "220px",
-        height: "220px",
         boxSizing: "border-box",
         overflow: "hidden",
       }}
