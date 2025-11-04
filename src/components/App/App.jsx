@@ -248,7 +248,7 @@ function App() {
     <div className="AppLayout">
       <header className="AppHeader">
         <h1>
-          Ja<span className="highlight">mmm</span>ing
+          Crate
         </h1>
         <div className="AppHeader-user">
           {isConnected ? (
@@ -344,7 +344,7 @@ function App() {
         />
       </main>
       <footer className="AppFooter">
-        © 2024 Jamming &mdash; Built with React & Spotify API
+        © 2024 Crate &mdash; Built with React & Spotify API
       </footer>
     </div>
   );

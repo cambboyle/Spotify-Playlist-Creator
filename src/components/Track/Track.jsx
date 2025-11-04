@@ -131,7 +131,7 @@ const Track = ({
         padding: "16px 20px",
         boxShadow: "0 2px 8px rgba(245, 130, 174, 0.04)",
         transition: "box-shadow 0.22s, border-color 0.22s, transform 0.18s",
-        width: "340px",
+        width: "50%",
         minWidth: "0",
         boxSizing: "border-box",
       }}

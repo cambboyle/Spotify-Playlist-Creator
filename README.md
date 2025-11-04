@@ -22,7 +22,7 @@ This project implements the client-side implicit grant OAuth flow to obtain a sh
 
 ```bash
 git clone https://github.com/cambboyle/Spotify-Playlist-Creator.git
-cd jamming
+cd crate
 npm install
 ```
 
