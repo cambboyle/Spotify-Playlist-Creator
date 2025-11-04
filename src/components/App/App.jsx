@@ -97,6 +97,8 @@ function App() {
             const profile = await Spotify.getCurrentUser();
             if (profile && profile.display_name)
               setUserDisplayName(profile.display_name);
+            // Store profile for photo
+            Spotify.profile = profile;
           } catch (err) {
             // Detect private/forbidden profile access and display a clearer error
             if (err && err.code === 403) {
@@ -246,15 +248,42 @@ function App() {
 
   return (
     <div className="AppLayout">
-      <header className="AppHeader">
-        <h1>
-          Crate
-        </h1>
-        <div className="AppHeader-user">
+      <header
+        className="AppHeader"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 32px",
+        }}
+      >
+        <h1 style={{ margin: 0 }}>Crate</h1>
+        <div
+          className="AppHeader-user"
+          style={{ display: "flex", alignItems: "center", gap: "18px" }}
+        >
           {isConnected ? (
-            <div>
-              <span className="AppHeader-userName">
-                Connected as {userDisplayName || "Spotify user"}
+            <>
+              {Spotify.profile &&
+                Spotify.profile.images &&
+                Spotify.profile.images.length > 0 && (
+                  <img
+                    src={Spotify.profile.images[0].url}
+                    alt="Profile"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "2px solid var(--color-button)",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+              <span
+                className="AppHeader-userName"
+                style={{ fontWeight: "bold" }}
+              >
+                {userDisplayName || "Spotify user"}
               </span>
               <button
                 type="button"
@@ -267,7 +296,7 @@ function App() {
               >
                 Disconnect
               </button>
-            </div>
+            </>
           ) : (
             <button
               type="button"
