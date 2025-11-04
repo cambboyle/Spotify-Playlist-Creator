@@ -261,7 +261,7 @@ function App() {
           className="AppHeader-left"
           style={{ display: "flex", alignItems: "center" }}
         >
-          <h1 style={{ margin: 0 }}>Crate</h1>
+          <h1 style={{ marginTop: "25px" }}>Crate</h1>
         </div>
         <div
           className="AppHeader-right"
@@ -298,6 +298,7 @@ function App() {
                   setUserDisplayName(null);
                   setIsConnected(false);
                 }}
+                style={{ marginBottom: "25px" }}
               >
                 Disconnect
               </button>
@@ -307,6 +308,7 @@ function App() {
               type="button"
               className="button-primary"
               onClick={() => Spotify.authorize()}
+              style={{ marginBottom: "25px" }}
             >
               Connect to Spotify
             </button>
