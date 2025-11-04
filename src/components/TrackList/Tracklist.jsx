@@ -8,13 +8,14 @@ const Tracklist = (props) => {
       className="Tracklist"
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
+        gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
         gap: "32px",
         width: "100%",
         maxWidth: "900px",
         margin: "0 auto",
         padding: "0",
         boxSizing: "border-box",
+        justifyContent: "center",
       }}
     >
       {tracks.map((track, idx) => {

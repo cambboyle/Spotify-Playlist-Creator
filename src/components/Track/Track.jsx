@@ -130,8 +130,9 @@ const Track = ({
         border: "2px solid var(--color-stroke)",
         boxShadow: "0 2px 8px rgba(245, 130, 174, 0.04)",
         padding: "24px 20px",
-        width: "100%",
-        minWidth: 0,
+        width: "340px",
+        minWidth: "0",
+        minHeight: "220px",
         boxSizing: "border-box",
         overflow: "hidden",
       }}
