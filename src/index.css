@@ -17,6 +17,18 @@
     --color-button-hover: #e06c9f;    /* Slightly darker pink for button hover */
 }
 
+/* SearchContainer styles */
+.SearchContainer {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 0 24px 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 /* SearchBar styles */
 .SearchBar-container {
     background: var(--color-card-bg);

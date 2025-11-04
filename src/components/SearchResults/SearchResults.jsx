@@ -35,7 +35,7 @@ const SearchResults = ({
   const lastPage = Math.max(1, Math.ceil(total / shown));
 
   return (
-    <div>
+    <div className="SearchContainer">
       <h2>Results</h2>
       <div className="SearchResults-show" style={{ marginBottom: "0.5em" }}>
         <button
