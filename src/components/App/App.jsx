@@ -257,63 +257,62 @@ function App() {
           padding: "0 32px",
         }}
       >
-        <header className="AppHeader" style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 32px",
-          minHeight: "72px"
-        }}>
-          <div className="AppHeader-left" style={{ display: "flex", alignItems: "center" }}>
-            <h1 style={{ margin: 0 }}>Crate</h1>
-          </div>
-          <div className="AppHeader-right" style={{ display: "flex", alignItems: "center", gap: "18px" }}>
-            {isConnected ? (
-              <>
-                {Spotify.profile &&
-                  Spotify.profile.images &&
-                  Spotify.profile.images.length > 0 && (
-                    <img
-                      src={Spotify.profile.images[0].url}
-                      alt="Profile"
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        border: "2px solid var(--color-button)",
-                        objectFit: "cover",
-                      }}
-                    />
-                  )}
-                <span
-                  className="AppHeader-userName"
-                  style={{ fontWeight: "bold" }}
-                >
-                  {userDisplayName || "Spotify user"}
-                </span>
-                <button
-                  type="button"
-                  className="button-primary"
-                  onClick={() => {
-                    Spotify.logout();
-                    setUserDisplayName(null);
-                    setIsConnected(false);
-                  }}
-                >
-                  Disconnect
-                </button>
-              </>
-            ) : (
+        <div
+          className="AppHeader-left"
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <h1 style={{ margin: 0 }}>Crate</h1>
+        </div>
+        <div
+          className="AppHeader-right"
+          style={{ display: "flex", alignItems: "center", gap: "18px" }}
+        >
+          {isConnected ? (
+            <>
+              {Spotify.profile &&
+                Spotify.profile.images &&
+                Spotify.profile.images.length > 0 && (
+                  <img
+                    src={Spotify.profile.images[0].url}
+                    alt="Profile"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      border: "2px solid var(--color-button)",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+              <span
+                className="AppHeader-userName"
+                style={{ fontWeight: "bold" }}
+              >
+                {userDisplayName || "Spotify user"}
+              </span>
               <button
                 type="button"
                 className="button-primary"
-                onClick={() => Spotify.authorize()}
+                onClick={() => {
+                  Spotify.logout();
+                  setUserDisplayName(null);
+                  setIsConnected(false);
+                }}
               >
-                Connect to Spotify
+                Disconnect
               </button>
-            )}
-          </div>
-        </header>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="button-primary"
+              onClick={() => Spotify.authorize()}
+            >
+              Connect to Spotify
+            </button>
+          )}
+        </div>
+      </header>
       <main className="AppMain">
         <section className="AppSection AppSection--search">
           <SearchBar onSearch={search} />
