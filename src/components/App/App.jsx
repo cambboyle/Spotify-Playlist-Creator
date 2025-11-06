@@ -354,6 +354,10 @@ function App() {
                 onRemove={removeTrack}
                 onSave={savePlaylist}
                 isLoading={isLoading}
+                onReorder={(tracks) => {
+                  setPlaylistTracks(tracks);
+                  setIsDirty(true);
+                }}
               />
             </div>
           </div>
