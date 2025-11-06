@@ -94,11 +94,79 @@ const SearchResults = ({
           Last
         </button>
       </div>
-      <Tracklist
-        tracks={searchResults?.items || []}
-        onAdd={onAdd}
-        playlistTracks={playlistTracks}
-      />
+      {isLoading ? (
+        <div
+          className="SearchResults-skeleton"
+          role="status"
+          aria-live="polite"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: "1em",
+            marginTop: "1em",
+          }}
+        >
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              style={{
+                background: "var(--color-background)",
+                borderRadius: "12px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                padding: "1em",
+                minHeight: "120px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5em",
+                opacity: 0.7,
+                border: "1px solid var(--color-main)",
+                animation: "pulse 1.2s infinite",
+              }}
+            >
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  background: "var(--color-main)",
+                  borderRadius: "8px",
+                  marginBottom: "0.5em",
+                }}
+              />
+              <div
+                style={{
+                  height: "1.1em",
+                  width: "70%",
+                  background: "var(--color-secondary)",
+                  borderRadius: "4px",
+                }}
+              />
+              <div
+                style={{
+                  height: "0.9em",
+                  width: "40%",
+                  background: "var(--color-peach)",
+                  borderRadius: "4px",
+                }}
+              />
+            </div>
+          ))}
+          <style>
+            {`
+              @keyframes pulse {
+                0% { opacity: 0.7; }
+                50% { opacity: 0.4; }
+                100% { opacity: 0.7; }
+              }
+            `}
+          </style>
+        </div>
+      ) : (
+        <Tracklist
+          tracks={searchResults?.items || []}
+          onAdd={onAdd}
+          playlistTracks={playlistTracks}
+        />
+      )}
     </div>
   );
 };

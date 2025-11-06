@@ -125,107 +125,178 @@ const Playlist = (props) => {
         </span>
       </div>
       <ul className="PlaylistTracklist">
-        {displayedTracks.map((track, idx) => (
-          <li
-            key={track.id}
-            className="PlaylistTracklist-row"
-            style={{
-              borderBottom:
-                idx < displayedTracks.length - 1
-                  ? "1px solid var(--gray-400)"
-                  : "none",
-              paddingBottom: "8px",
-              paddingTop: "8px",
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <img
-              src={
-                track.albumImages?.[2]?.url ||
-                track.albumImages?.[1]?.url ||
-                track.albumImages?.[0]?.url ||
-                (track.album && track.album.images && track.album.images[2]
-                  ? track.album.images[2].url
-                  : null)
-              }
-              alt={`${track.name} album art`}
-              className="PlaylistTracklist-img"
-              width={48}
-              height={48}
-              style={{
-                borderRadius: "8px",
-                marginRight: "14px",
-                objectFit: "cover",
-                background: "var(--gray-400)",
-                border: "1px solid var(--gray-400)",
-                flexShrink: 0,
-              }}
-            />
-            <div
-              className="PlaylistTracklist-info"
-              style={{ flex: 1, minWidth: 0 }}
-            >
-              <div
-                className="PlaylistTracklist-title"
+        {props.isLoading
+          ? Array.from({ length: 5 }).map((_, idx) => (
+              <li
+                key={`skeleton-${idx}`}
+                className="PlaylistTracklist-row"
                 style={{
-                  fontWeight: "bold",
-                  color: "var(--gray-900)",
-                  fontSize: "1rem",
-                  marginBottom: "2px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  borderBottom: idx < 4 ? "1px solid var(--gray-400)" : "none",
+                  paddingBottom: "8px",
+                  paddingTop: "8px",
+                  alignItems: "center",
+                  display: "flex",
+                  opacity: 0.7,
+                }}
+                aria-hidden="true"
+              >
+                <div
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "8px",
+                    marginRight: "14px",
+                    background: "var(--gray-300)",
+                    border: "1px solid var(--gray-400)",
+                    flexShrink: 0,
+                    animation: "pulse 1.2s infinite",
+                  }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      height: "16px",
+                      width: "60%",
+                      background: "var(--gray-200)",
+                      borderRadius: "4px",
+                      marginBottom: "6px",
+                      animation: "pulse 1.2s infinite",
+                    }}
+                  />
+                  <div
+                    style={{
+                      height: "12px",
+                      width: "40%",
+                      background: "var(--gray-100)",
+                      borderRadius: "4px",
+                      animation: "pulse 1.2s infinite",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    marginLeft: "auto",
+                    borderRadius: "50%",
+                    width: "32px",
+                    height: "32px",
+                    background: "var(--gray-200)",
+                    border: "2px solid var(--accent)",
+                    animation: "pulse 1.2s infinite",
+                  }}
+                />
+              </li>
+            ))
+          : displayedTracks.map((track, idx) => (
+              <li
+                key={track.id}
+                className="PlaylistTracklist-row"
+                style={{
+                  borderBottom:
+                    idx < displayedTracks.length - 1
+                      ? "1px solid var(--gray-400)"
+                      : "none",
+                  paddingBottom: "8px",
+                  paddingTop: "8px",
+                  alignItems: "center",
+                  display: "flex",
                 }}
               >
-                {track.name}
-              </div>
-              <div
-                className="PlaylistTracklist-meta"
-                style={{
-                  fontSize: "0.95rem",
-                  color: "var(--gray-700)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                <span>{track.artist}</span> &mdash; <span>{track.album}</span>
-              </div>
-            </div>
-            <button
-              className="PlaylistTracklist-action button-secondary"
-              onClick={() => props.onRemove(track)}
-              aria-label={`Remove ${track.name} from playlist`}
-              style={{
-                marginLeft: "auto",
-                borderRadius: "50%",
-                width: "32px",
-                height: "32px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.3rem",
-                border: "2px solid var(--accent)",
-                background: "var(--gray-200)",
-                color: "var(--accent)",
-                cursor: "pointer",
-                transition: "background 0.2s, color 0.2s, border 0.2s",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = "var(--accent)";
-                e.currentTarget.style.color = "var(--gray-100)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = "var(--gray-200)";
-                e.currentTarget.style.color = "var(--accent)";
-              }}
-            >
-              &minus;
-            </button>
-          </li>
-        ))}
+                <img
+                  src={
+                    track.albumImages?.[2]?.url ||
+                    track.albumImages?.[1]?.url ||
+                    track.albumImages?.[0]?.url ||
+                    (track.album && track.album.images && track.album.images[2]
+                      ? track.album.images[2].url
+                      : null)
+                  }
+                  alt={`${track.name} album art`}
+                  className="PlaylistTracklist-img"
+                  width={48}
+                  height={48}
+                  style={{
+                    borderRadius: "8px",
+                    marginRight: "14px",
+                    objectFit: "cover",
+                    background: "var(--gray-400)",
+                    border: "1px solid var(--gray-400)",
+                    flexShrink: 0,
+                  }}
+                />
+                <div
+                  className="PlaylistTracklist-info"
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <div
+                    className="PlaylistTracklist-title"
+                    style={{
+                      fontWeight: "bold",
+                      color: "var(--gray-900)",
+                      fontSize: "1rem",
+                      marginBottom: "2px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {track.name}
+                  </div>
+                  <div
+                    className="PlaylistTracklist-meta"
+                    style={{
+                      fontSize: "0.95rem",
+                      color: "var(--gray-700)",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    <span>{track.artist}</span> &mdash;{" "}
+                    <span>{track.album}</span>
+                  </div>
+                </div>
+                <button
+                  className="PlaylistTracklist-action button-secondary"
+                  onClick={() => props.onRemove(track)}
+                  aria-label={`Remove ${track.name} from playlist`}
+                  style={{
+                    marginLeft: "auto",
+                    borderRadius: "50%",
+                    width: "32px",
+                    height: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.3rem",
+                    border: "2px solid var(--accent)",
+                    background: "var(--gray-200)",
+                    color: "var(--accent)",
+                    cursor: "pointer",
+                    transition: "background 0.2s, color 0.2s, border 0.2s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = "var(--accent)";
+                    e.currentTarget.style.color = "var(--gray-100)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "var(--gray-200)";
+                    e.currentTarget.style.color = "var(--accent)";
+                  }}
+                >
+                  &minus;
+                </button>
+              </li>
+            ))}
       </ul>
+      <style>
+        {`
+          @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+          }
+        `}
+      </style>
 
       <button
         className="button-primary playlist-save"

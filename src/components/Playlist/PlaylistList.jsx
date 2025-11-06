@@ -71,7 +71,69 @@ export default function PlaylistList({ onSelect }) {
       >
         {loading ? "Refreshing..." : "Refresh"}
       </button>
-      {playlists.length === 0 && !loading ? (
+      {loading ? (
+        <div
+          className="PlaylistList-loading"
+          role="status"
+          aria-live="polite"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75em",
+            color: "var(--gray-900)",
+            fontWeight: "bold",
+            marginTop: "1em",
+          }}
+        >
+          <span
+            style={{
+              width: "1.2em",
+              height: "1.2em",
+              border: "3px solid var(--accent)",
+              borderTop: "3px solid var(--accent-coral)",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+              display: "inline-block",
+              margin: "0 auto",
+            }}
+          />
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.5em" }}
+          >
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  height: "2.2em",
+                  background: "var(--gray-100)",
+                  borderRadius: "8px",
+                  margin: "0.2em 0",
+                  width: "100%",
+                  maxWidth: "320px",
+                  boxShadow: "0 1px 4px 0 var(--gray-300)",
+                  opacity: 0.7,
+                  animation: "pulse 1.2s infinite",
+                }}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+          <span style={{ marginTop: "0.5em" }}>Loading playlists...</span>
+          <style>
+            {`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+              @keyframes pulse {
+                0% { opacity: 0.7; }
+                50% { opacity: 1; }
+                100% { opacity: 0.7; }
+              }
+            `}
+          </style>
+        </div>
+      ) : playlists.length === 0 ? (
         <div
           className="PlaylistList-empty"
           style={{ color: "var(--gray-700)" }}
@@ -164,41 +226,6 @@ export default function PlaylistList({ onSelect }) {
             </button>
           )}
         </>
-      )}
-      {loading && (
-        <div
-          className="PlaylistList-loading"
-          role="status"
-          aria-live="polite"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5em",
-            color: "var(--gray-900)",
-            fontWeight: "bold",
-          }}
-        >
-          <span
-            style={{
-              width: "1.2em",
-              height: "1.2em",
-              border: "3px solid var(--accent)",
-              borderTop: "3px solid var(--accent-coral)",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite",
-              display: "inline-block",
-            }}
-          />
-          Loading playlists...
-          <style>
-            {`
-              @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-            `}
-          </style>
-        </div>
       )}
     </div>
   );
