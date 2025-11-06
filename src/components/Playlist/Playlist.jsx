@@ -2,14 +2,45 @@ import { useCallback, useState, useEffect } from "react";
 import Tracklist from "../TrackList/Tracklist";
 
 const Playlist = (props) => {
-  const { onNameChange, isLoading } = props;
+  const {
+    onNameChange,
+    isLoading,
+    playlistTracks,
+    onRemove,
+    playlistName,
+    onSave,
+  } = props;
   const [shown, setShown] = useState(50);
   const [page, setPage] = useState(1);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [tracks, setTracks] = useState(playlistTracks || []);
 
-  // Reset pagination when playlistTracks changes
+  // Reset pagination and tracks when playlistTracks changes
   useEffect(() => {
     setPage(1);
-  }, [props.playlistTracks]);
+    setTracks(playlistTracks || []);
+  }, [playlistTracks]);
+
+  // Drag and drop handlers
+  const handleDragStart = (idx) => setDraggedIdx(idx);
+  const handleDragEnter = (idx) => {
+    if (draggedIdx === null || draggedIdx === idx) return;
+    const updated = [...tracks];
+    const [removed] = updated.splice(draggedIdx, 1);
+    updated.splice(idx, 0, removed);
+    setTracks(updated);
+    setDraggedIdx(idx);
+  };
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
+    // Update parent playlistTracks order
+    if (
+      JSON.stringify(tracks.map((t) => t.id)) !==
+      JSON.stringify((playlistTracks || []).map((t) => t.id))
+    ) {
+      if (props.onReorder) props.onReorder(tracks);
+    }
+  };
 
   const handleNameChange = useCallback(
     (event) => {
@@ -18,15 +49,12 @@ const Playlist = (props) => {
     [onNameChange],
   );
 
-  const total = (props.playlistTracks || []).length;
+  const total = tracks.length;
   const lastPage = Math.max(1, Math.ceil(total / shown));
   const startIdx = total === 0 ? 0 : shown * (page - 1) + 1;
   const endIdx = Math.min(page * shown, total);
 
-  const displayedTracks = (props.playlistTracks || []).slice(
-    (page - 1) * shown,
-    page * shown,
-  );
+  const displayedTracks = tracks.slice((page - 1) * shown, page * shown);
 
   return (
     <div className="Playlist">
@@ -199,8 +227,33 @@ const Playlist = (props) => {
                   paddingTop: "8px",
                   alignItems: "center",
                   display: "flex",
+                  background:
+                    draggedIdx === idx ? "var(--color-peach)" : undefined,
+                  opacity: draggedIdx === idx ? 0.7 : 1,
+                  transition: "background 0.2s, opacity 0.2s",
                 }}
+                draggable
+                onDragStart={() => handleDragStart(idx)}
+                onDragEnter={() => handleDragEnter(idx)}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => e.preventDefault()}
+                tabIndex={0}
+                aria-grabbed={draggedIdx === idx}
               >
+                <span
+                  className="PlaylistTracklist-draghandle"
+                  style={{
+                    cursor: "grab",
+                    marginRight: "10px",
+                    fontSize: "1.3em",
+                    color: "var(--accent)",
+                    userSelect: "none",
+                  }}
+                  title="Drag to reorder"
+                  aria-label="Drag to reorder"
+                >
+                  &#x2630;
+                </span>
                 <img
                   src={
                     track.albumImages?.[2]?.url ||
@@ -257,7 +310,7 @@ const Playlist = (props) => {
                 </div>
                 <button
                   className="PlaylistTracklist-action button-secondary"
-                  onClick={() => props.onRemove(track)}
+                  onClick={() => onRemove(track)}
                   aria-label={`Remove ${track.name} from playlist`}
                   style={{
                     marginLeft: "auto",
