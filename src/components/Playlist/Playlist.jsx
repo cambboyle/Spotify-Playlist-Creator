@@ -239,6 +239,41 @@ const Playlist = (props) => {
                 onDragOver={(e) => e.preventDefault()}
                 tabIndex={0}
                 aria-grabbed={draggedIdx === idx}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp" && idx > 0) {
+                    const updated = [...tracks];
+                    [updated[idx - 1], updated[idx]] = [
+                      updated[idx],
+                      updated[idx - 1],
+                    ];
+                    setTracks(updated);
+                    if (props.onReorder) props.onReorder(updated);
+                    // Move focus to the new position
+                    setTimeout(() => {
+                      const list = document.querySelectorAll(
+                        ".PlaylistTracklist-row",
+                      );
+                      if (list[idx - 1]) list[idx - 1].focus();
+                    }, 0);
+                    e.preventDefault();
+                  }
+                  if (e.key === "ArrowDown" && idx < tracks.length - 1) {
+                    const updated = [...tracks];
+                    [updated[idx], updated[idx + 1]] = [
+                      updated[idx + 1],
+                      updated[idx],
+                    ];
+                    setTracks(updated);
+                    if (props.onReorder) props.onReorder(updated);
+                    setTimeout(() => {
+                      const list = document.querySelectorAll(
+                        ".PlaylistTracklist-row",
+                      );
+                      if (list[idx + 1]) list[idx + 1].focus();
+                    }, 0);
+                    e.preventDefault();
+                  }
+                }}
               >
                 <span
                   className="PlaylistTracklist-draghandle"
