@@ -1,23 +1,15 @@
 // Basic Playwright E2E test scaffold for user flow: Connect → Search → Add tracks → Save playlist
 
-const { test, expect } = require("@playwright/test");
+import { test, expect } from "@playwright/test";
 
 test.describe("Crate App User Flow", () => {
   test("Connect, search, add tracks, and save playlist", async ({ page }) => {
     // Go to the app
     await page.goto("/");
 
-    // Step 1: Connect to Spotify (mock or skip if not available in test env)
-    // NOTE: This step may require mocking OAuth or running against a test account.
-    // For now, check if the Connect button exists and click it.
-    const connectBtn = page.locator("button", {
-      hasText: /connect to spotify/i,
-    });
-    if (await connectBtn.isVisible()) {
-      await connectBtn.click();
-      // TODO: Handle OAuth flow or mock login for test environment
-      // For now, skip actual login for scaffold
-    }
+    // Step 1: (Skipped) Connect to Spotify
+    // Skipping login step for local E2E testing.
+    // Assumes user is already authenticated or app is adjusted for test.
 
     // Step 2: Search for a track
     const searchInput = page.locator(

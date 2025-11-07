@@ -1,0 +1,41 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - heading "Login" [level=1] [ref=e6]
+    - generic [ref=e7]:
+      - link "Spotify" [ref=e10] [cursor=pointer]:
+        - /url: "#"
+        - img "Spotify" [ref=e11]
+      - heading "Log in to Spotify" [level=1] [ref=e13]
+      - list [ref=e14]:
+        - listitem [ref=e15]:
+          - button "Continue with Google" [ref=e16] [cursor=pointer]:
+            - generic [ref=e18]: Continue with Google
+        - listitem [ref=e19]:
+          - button "Continue with Facebook" [ref=e20] [cursor=pointer]:
+            - generic [ref=e22]: Continue with Facebook
+        - listitem [ref=e23]:
+          - button "Continue with Apple" [ref=e24] [cursor=pointer]:
+            - generic [ref=e26]: Continue with Apple
+      - generic [ref=e27]:
+        - generic [ref=e29]:
+          - generic [ref=e32]: Email or username
+          - textbox "Email or username" [ref=e33]
+        - button "Continue" [ref=e35] [cursor=pointer]:
+          - generic [ref=e37]: Continue
+      - heading "Don't have an account?Sign up for Spotify" [level=2] [ref=e39]:
+        - text: Don't have an account?
+        - link "Sign up for Spotify" [ref=e40] [cursor=pointer]:
+          - /url: "#"
+  - contentinfo [ref=e41]:
+    - paragraph [ref=e43]:
+      - text: This site is protected by reCAPTCHA and the Google
+      - link "Privacy Policy" [ref=e44] [cursor=pointer]:
+        - /url: https://policies.google.com/privacy
+      - text: and
+      - link "Terms of Service" [ref=e45] [cursor=pointer]:
+        - /url: https://policies.google.com/terms
+      - text: apply.
+```
