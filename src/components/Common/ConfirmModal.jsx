@@ -6,6 +6,8 @@ export default function ConfirmModal({
   message,
   onConfirm,
   onCancel,
+  confirmLabel = "Continue",
+  cancelLabel = "Cancel",
 }) {
   if (!isOpen) return null;
 
@@ -16,10 +18,10 @@ export default function ConfirmModal({
         <p>{message}</p>
         <div className="ConfirmModal-actions">
           <button type="button" className="button-secondary" onClick={onCancel}>
-            Cancel
+            {cancelLabel}
           </button>
           <button type="button" className="button-primary" onClick={onConfirm}>
-            Continue
+            {confirmLabel}
           </button>
         </div>
       </div>

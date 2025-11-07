@@ -119,6 +119,30 @@ git push --force
 
 If you don't want to rewrite history, at minimum rotate the credentials (create a new Spotify client secret/ID) and delete the old one in the Spotify Dashboard.
 
+## 🧪 Testing Strategy
+
+This project emphasizes robust unit and integration testing using Vitest and Testing Library.
+
+- All Spotify API calls are mocked to simulate real user flows.
+- Critical flows (search, add/remove tracks, playlist save, error handling) are covered by tests.
+- Test coverage is measured and documented.
+
+> ⚠️ **Note:** E2E testing with Playwright is not implemented due to Spotify OAuth restrictions. Spotify does not support automated login flows or allow localhost redirect URIs for OAuth in a test environment.
+
+### Manual Testing Checklist
+
+Some flows require manual QA due to OAuth limitations:
+- Login with Spotify (OAuth flow)
+- Search for tracks
+- Add/remove tracks to playlist
+- Save playlist to Spotify
+- Load/edit existing playlist
+- Unsaved changes modal workflow
+- Error handling (invalid token, network error, etc.)
+
+**Professional Signal:**  
+This approach demonstrates real-world QA awareness and the ability to document and test user flows even when automation isn’t possible.
+
 ## License
 
 MIT
