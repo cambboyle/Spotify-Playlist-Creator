@@ -1,6 +1,6 @@
 # Crate: Spotify Playlist Creator
 
-[![codecov](https://app.codecov.io/github/cambboyle/Crate/branch/main/graph/badge.svg)](https://app.codecov.io/github/cambboyle/Crate)
+[![codecov](https://codecov.io/github/cambboyle/Crate/branch/main/graph/badge.svg?token=VN7IE89YY4)](https://codecov.io/github/cambboyle/Crate)
 <!-- Replace the above URL with your actual Codecov badge URL after setup -->
 
 Crate is a modern, accessible React + Vite application for searching Spotify tracks and building custom playlists using the Spotify Web API. It features a polished UI, keyboard-accessible drag-and-drop, robust error handling, and a strong focus on testing and code quality.
