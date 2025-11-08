@@ -99,6 +99,64 @@ describe("Playlist component", () => {
     expect(screen.queryByText("Track 1")).not.toBeInTheDocument();
   });
 
+  it("disables prev/first buttons on first page and next/last on last page", () => {
+    render(<Playlist {...defaultProps} playlistTracks={makeTracks(15)} />);
+    // On first page
+    const firstButton = screen.getByRole("button", { name: /^First$/i });
+    const prevButton = screen.getByRole("button", { name: /^Prev$/i });
+    expect(firstButton).toBeDisabled();
+    expect(prevButton).toBeDisabled();
+
+    // Go to last page
+    const nextButton = screen.getByRole("button", { name: /^Next$/i });
+    const lastButton = screen.getByRole("button", { name: /^Last$/i });
+    fireEvent.click(lastButton);
+    expect(nextButton).toBeDisabled();
+    expect(lastButton).toBeDisabled();
+  });
+
+  it("calls onReorder when drag-and-drop reorders tracks", () => {
+    render(<Playlist {...defaultProps} />);
+    const trackRows = screen.getAllByRole("listitem");
+    // Simulate drag start on first item, drag enter on second, then drag end
+    fireEvent.dragStart(trackRows[0]);
+    fireEvent.dragEnter(trackRows[1]);
+    fireEvent.dragEnd(trackRows[1]);
+    expect(defaultProps.onReorder).toHaveBeenCalled();
+    const reordered = defaultProps.onReorder.mock.calls[0][0];
+    expect(reordered[0].id).toBe("track-2");
+    expect(reordered[1].id).toBe("track-1");
+  });
+
+  it("renders correct UI for empty playlist", () => {
+    render(<Playlist {...defaultProps} playlistTracks={[]} />);
+    expect(screen.getByText(/No tracks/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Save to Spotify/i }),
+    ).toBeDisabled();
+  });
+
+  it("disables save button when loading, even if tracks exist", () => {
+    render(
+      <Playlist {...defaultProps} isLoading playlistTracks={makeTracks(2)} />,
+    );
+    const saveButton = screen.getByRole("button", {
+      name: /Saving.../i,
+    });
+    expect(saveButton).toBeDisabled();
+  });
+
+  it("does not reorder on ArrowUp at first item or ArrowDown at last item", () => {
+    render(<Playlist {...defaultProps} />);
+    const trackRows = screen.getAllByRole("listitem");
+    // ArrowUp on first item
+    fireEvent.keyDown(trackRows[0], { key: "ArrowUp" });
+    expect(defaultProps.onReorder).not.toHaveBeenCalled();
+    // ArrowDown on last item
+    fireEvent.keyDown(trackRows[trackRows.length - 1], { key: "ArrowDown" });
+    expect(defaultProps.onReorder).not.toHaveBeenCalled();
+  });
+
   it("supports pagination and updates display counts", () => {
     render(<Playlist {...defaultProps} playlistTracks={makeTracks(20)} />);
 
