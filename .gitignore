@@ -28,3 +28,6 @@ dist-ssr
 
 # Personal progress tracking
 ROADMAP.md
+
+# Test coverage output
+coverage/

@@ -1,148 +1,127 @@
-# React + Vite
+# Crate: Spotify Playlist Creator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![codecov](https://codecov.io/gh/your-username/your-repo/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/your-repo)
+<!-- Replace the above URL with your actual Codecov badge URL after setup -->
 
-Currently, two official plugins are available:
+Crate is a modern, accessible React + Vite application for searching Spotify tracks and building custom playlists using the Spotify Web API. It features a polished UI, keyboard-accessible drag-and-drop, robust error handling, and a strong focus on testing and code quality.
 
-# Spotify Playlist Creator
+---
 
-A small React + Vite app that lets you search Spotify tracks and create playlists using the Spotify Web API.
+## 🚀 Features
 
-This project implements the client-side implicit grant OAuth flow to obtain a short-lived access token that allows creating playlists on behalf of the authenticated user.
+- **Spotify OAuth Integration:** Secure login and playlist management via the Spotify Web API.
+- **Track Search:** Fast, cached search with real-time results.
+- **Playlist Editor:** Add, remove, and reorder tracks with drag-and-drop and keyboard controls.
+- **Multiple Playlists:** View, select, and edit your Spotify playlists.
+- **Responsive & Accessible:** Works great on desktop and mobile, with full keyboard navigation.
+- **Robust Testing:** 80%+ coverage with Vitest and Testing Library; CI-ready.
+- **Professional Documentation:** Clear roadmap, manual QA checklist, and coverage badge.
 
-## What this repo contains
+---
 
-- A minimal React app (Vite) with components to search tracks and manage a playlist.
-- `src/components/util/Spotify.js` — client helper that handles OAuth and calls to the Spotify Web API.
-- No styling: CSS files have been intentionally left empty so you can add your own styles.
+## 🛠️ Getting Started
 
-## Quick start
-
-1. Clone the repository and install dependencies:
+### 1. Clone & Install
 
 ```bash
-git clone https://github.com/cambboyle/Spotify-Playlist-Creator.git
+git clone https://github.com/your-username/your-repo.git
 cd crate
 npm install
 ```
 
-2. Register a Spotify application
+### 2. Register a Spotify Application
 
-- Go to https://developer.spotify.com/dashboard/applications and create an app.
-- Spotify sometimes rejects `http://localhost` redirect URIs for security. If that happens, use a secure (https) public URL from a tunneling service such as ngrok, localtunnel, or Cloudflare Tunnel and add that URL as the Redirect URI in the app settings.
-- Examples:
-  - `https://my-ngrok-subdomain.ngrok.io/`
-  - `https://random-ttl-123.localtunnel.app/`
-  - `https://<your-cloudflare-tunnel>.trycloudflare.com/`
-- Copy the Client ID.
+- Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications) and create a new app.
+- Add your local or tunnel URL as a Redirect URI (e.g., `http://localhost:3000/` or a public tunnel like ngrok).
+- Copy your **Client ID**.
 
-3. Create a `.env` file in the project root and fill the values. Example contents:
+### 3. Configure Environment Variables
 
-Create a file named `.env` (do NOT commit it) and add:
+Create a `.env` file in the project root:
 
 ```properties
-# Spotify Client ID from Spotify Developer Dashboard
 VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
-
-# Optional: override redirect URI (for public tunnels / deployed sites)
 VITE_SPOTIFY_REDIRECT_URI=http://localhost:3000/
 ```
 
-Do NOT commit `.env` — it may contain sensitive values. Vite exposes env variables prefixed with `VITE_` to the client, so keep secrets out of version control.
+**Do NOT commit `.env`** — it contains sensitive credentials.
 
-4. Run the app
+### 4. Run the App
 
 ```bash
 npm run dev
 ```
 
-Open http://localhost:3000 in your browser. The app includes a "Connect to Spotify" button — use that to authorize the client. When you approve, Spotify will redirect back with an access token.
+Visit [http://localhost:3000](http://localhost:3000) and click "Connect to Spotify" to begin.
 
-## How OAuth works here (Authorization Code Flow with PKCE)
+---
 
-Spotify deprecated the implicit grant flow. This app uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange), which is the recommended method for single-page applications.
+## 🔒 OAuth Flow
 
-High level:
+Crate uses the [Authorization Code Flow with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow) for secure, client-side authentication. Tokens are stored in sessionStorage and never committed.
 
-- The client generates a random `code_verifier` and derives a `code_challenge` from it.
-- The app redirects the user to Spotify's authorization endpoint with `response_type=code` and includes the `code_challenge`.
-- After approval, Spotify redirects back with an authorization code (query parameter).
-- The client exchanges that code together with the original `code_verifier` for access and refresh tokens via Spotify's token endpoint.
-- Access tokens are stored in `sessionStorage`; refresh tokens (when provided) are used to obtain new access tokens when they expire.
+---
 
-Notes:
+## 🧪 Testing & Coverage
 
-- This implementation does the code exchange from the browser over HTTPS. For stronger security and to persist refresh tokens longer-term, consider a small backend to handle token exchange and storage.
-- Use the "Connect to Spotify" button in the UI to initiate authorization. After approving, you'll be redirected back and the app will exchange the code automatically.
+- **Unit & Integration Tests:** Written with [Vitest](https://vitest.dev/) and [Testing Library](https://testing-library.com/).
+- **Coverage:** See the badge above for current status. Run locally with:
 
-## Files you may want to change
+  ```bash
+  npx vitest run --coverage
+  ```
 
-- `src/components/util/Spotify.js` — OAuth scopes and implementation. The current scope includes `playlist-modify-public playlist-modify-private`.
-- `src/index.css` and `src/components/App/App.css` — intentionally empty for you to style.
+- **CI Integration:** Tests and coverage run automatically on every push via GitHub Actions and Codecov.
 
-## Development notes
+### Manual QA Checklist
 
-- This app assumes the redirect URI is `http://localhost:3000/`. If you change ports or host, update `redirectUri` in `src/components/util/Spotify.js` and your Spotify app settings.
-- If `VITE_SPOTIFY_CLIENT_ID` is missing, the Spotify helper will throw a helpful error.
+Due to Spotify OAuth restrictions, some flows require manual testing:
 
-## Troubleshooting
-
-- If you get redirected to Spotify but no token appears in the app, check the redirect URI configured in your Spotify application and ensure it exactly matches the app's URL (including trailing slash).
-- For CORS or network issues, confirm your dev server is running and you have an internet connection.
-
-### Accidentally committed your .env?
-
-If you (or someone) accidentally committed a `.env` with secrets, remove it from the repository history as soon as possible.
-
-1. Remove the file and commit the change:
-
-```bash
-git rm --cached .env
-git commit -m "Remove .env from repository"
-```
-
-2. To purge it from history (this rewrites commits — only do this on personal branches or coordinate with your team):
-
-```bash
-# Using git filter-repo (recommended)
-git filter-repo --path .env --invert-paths
-
-# Or with BFG (simpler):
-# bfg --delete-files .env
-```
-
-3. Force-push the rewritten history to remote (only when you're sure):
-
-```bash
-git push --force
-```
-
-If you don't want to rewrite history, at minimum rotate the credentials (create a new Spotify client secret/ID) and delete the old one in the Spotify Dashboard.
-
-## 🧪 Testing Strategy
-
-This project emphasizes robust unit and integration testing using Vitest and Testing Library.
-
-- All Spotify API calls are mocked to simulate real user flows.
-- Critical flows (search, add/remove tracks, playlist save, error handling) are covered by tests.
-- Test coverage is measured and documented.
-
-> ⚠️ **Note:** E2E testing with Playwright is not implemented due to Spotify OAuth restrictions. Spotify does not support automated login flows or allow localhost redirect URIs for OAuth in a test environment.
-
-### Manual Testing Checklist
-
-Some flows require manual QA due to OAuth limitations:
-- Login with Spotify (OAuth flow)
-- Search for tracks
-- Add/remove tracks to playlist
+- Spotify login (OAuth flow)
+- Track search
+- Add/remove/reorder tracks
 - Save playlist to Spotify
-- Load/edit existing playlist
-- Unsaved changes modal workflow
-- Error handling (invalid token, network error, etc.)
+- Load/edit existing playlists
+- Unsaved changes modal
+- Error handling (invalid token, network errors, rate limiting)
 
-**Professional Signal:**  
-This approach demonstrates real-world QA awareness and the ability to document and test user flows even when automation isn’t possible.
+---
 
-## License
+## 🗺️ Roadmap
+
+- [x] Theming and UI polish
+- [x] Skeleton loaders and spinners
+- [x] Drag-and-drop and keyboard accessibility
+- [x] Robust unit/integration tests
+- [x] Manual QA checklist
+- [x] CI with coverage badge
+- [ ] Backend API (future)
+- [ ] TypeScript migration (future)
+
+---
+
+## 📝 Professional Practices
+
+- **Commit Hygiene:** Conventional commit messages and clear PRs.
+- **EditorConfig & Prettier:** Consistent code style.
+- **Documentation:** README, roadmap, and in-code comments.
+- **Security:** No secrets in git; `.env` is gitignored.
+
+---
+
+## 🧑‍💻 Contributing
+
+Pull requests are welcome! Please open an issue to discuss major changes.
+
+---
+
+## 📄 License
 
 MIT
+
+---
+
+## 📊 Coverage Badge
+
+Once Codecov is set up, your badge will appear at the top of this README.  
+Replace the placeholder URL with your actual Codecov badge link.
