@@ -89,6 +89,140 @@ describe("Spotify utility module", () => {
           tracks: { total: 2 },
         }),
       });
+
+      describe("token handling and error cases", () => {
+        beforeEach(() => {
+          fetch.mockClear();
+          if ("userId" in Spotify) {
+            Spotify.userId = null;
+          }
+          // Clear tokens and storage
+          window.sessionStorage.clear();
+          if ("accessToken" in Spotify) Spotify.accessToken = null;
+          if ("refreshToken" in Spotify) Spotify.refreshToken = null;
+          if ("expiresAt" in Spotify) Spotify.expiresAt = null;
+        });
+
+        it("should throw if no access token and no code in URL", async () => {
+          // Remove tokens from storage
+          window.sessionStorage.removeItem("spotify_access_token");
+          window.sessionStorage.removeItem("spotify_refresh_token");
+          window.sessionStorage.removeItem("spotify_expires_at");
+          // Simulate no code in URL
+          const originalLocation = window.location;
+          delete window.location;
+          window.location = { ...originalLocation, href: "http://localhost/" };
+          await expect(Spotify.getAccessToken()).rejects.toThrow(
+            /No access token/,
+          );
+          window.location = originalLocation;
+        });
+
+        it("should refresh token if expired and refresh token exists", async () => {
+          // Set expired token in storage
+          window.sessionStorage.setItem(
+            "spotify_access_token",
+            "expired-token",
+          );
+          window.sessionStorage.setItem(
+            "spotify_refresh_token",
+            "refresh-token",
+          );
+          window.sessionStorage.setItem(
+            "spotify_expires_at",
+            (Date.now() - 10000).toString(),
+          );
+          // Mock refreshAccessToken
+          Spotify.refreshAccessToken = vi.fn().mockResolvedValue({
+            access_token: "new-token",
+            expires_in: 3600,
+            refresh_token: "refresh-token",
+          });
+          const token = await Spotify.getAccessToken();
+          expect(token).toBe("new-token");
+          expect(Spotify.refreshAccessToken).toHaveBeenCalled();
+        });
+
+        it("should throw if refresh token fails", async () => {
+          window.sessionStorage.setItem(
+            "spotify_access_token",
+            "expired-token",
+          );
+          window.sessionStorage.setItem(
+            "spotify_refresh_token",
+            "refresh-token",
+          );
+          window.sessionStorage.setItem(
+            "spotify_expires_at",
+            (Date.now() - 10000).toString(),
+          );
+          Spotify.refreshAccessToken = vi
+            .fn()
+            .mockRejectedValue(new Error("refresh failed"));
+          await expect(Spotify.getAccessToken()).rejects.toThrow(
+            /refresh failed/,
+          );
+        });
+
+        it("should exchange code for token if code is in URL", async () => {
+          // Simulate code in URL
+          const originalLocation = window.location;
+          delete window.location;
+          window.location = {
+            ...originalLocation,
+            href: "http://localhost/?code=abc123",
+            search: "?code=abc123",
+            assign: vi.fn(),
+          };
+          // Mock exchangeCodeForToken
+          Spotify.exchangeCodeForToken = vi.fn().mockResolvedValue({
+            access_token: "code-token",
+            expires_in: 3600,
+            refresh_token: "refresh-token",
+          });
+          // Also mock sessionStorage.setItem to avoid side effects
+          const setItemSpy = vi.spyOn(
+            window.sessionStorage.__proto__,
+            "setItem",
+          );
+          setItemSpy.mockImplementation(() => {});
+          const token = await Spotify.getAccessToken();
+          expect(token).toBe("code-token");
+          expect(Spotify.exchangeCodeForToken).toHaveBeenCalled();
+          setItemSpy.mockRestore();
+          window.location = originalLocation;
+        });
+
+        it("refreshAccessToken should throw on bad response", async () => {
+          fetch.mockResolvedValueOnce({ ok: false, status: 400 });
+          await expect(Spotify.refreshAccessToken()).rejects.toThrow();
+        });
+
+        it("exchangeCodeForToken should throw on bad response", async () => {
+          fetch.mockResolvedValueOnce({
+            ok: false,
+            status: 400,
+            text: async () => "bad",
+          });
+          await expect(
+            Spotify.exchangeCodeForToken("badcode", "verifier"),
+          ).rejects.toThrow();
+        });
+
+        it("refreshAccessToken should return new tokens on success", async () => {
+          fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({
+              access_token: "fresh-token",
+              expires_in: 3600,
+              refresh_token: "fresh-refresh",
+            }),
+          });
+          const result = await Spotify.refreshAccessToken("refresh-token");
+          expect(result.access_token).toBe("fresh-token");
+          expect(result.refresh_token).toBe("fresh-refresh");
+        });
+      });
       // 2. Tracks page 1 (with total)
       fetch.mockResolvedValueOnce({
         ok: true,
