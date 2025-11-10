@@ -138,4 +138,76 @@ describe("SearchResults", () => {
     expect(trackCards.length).toBeGreaterThan(0);
     expect(trackCards[0]).toHaveTextContent("Track 1");
   });
+
+  it("calls onAdd when add button is clicked for a track", () => {
+    const onAdd = vi.fn();
+    render(
+      <SearchResults
+        {...baseProps}
+        onAdd={onAdd}
+        searchResults={{ items: makeTracks(2), total: 2 }}
+      />,
+    );
+    // Find the add button for the first track
+    const addButtons = screen.getAllByRole("button", {
+      name: /Add to playlist/i,
+    });
+    expect(addButtons.length).toBeGreaterThan(0);
+    fireEvent.click(addButtons[0]);
+    expect(onAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "track-1" }),
+    );
+  });
+
+  it("shows 'Added' state for tracks already in the playlist", () => {
+    const playlistTracks = [makeTracks(1)[0]];
+    render(
+      <SearchResults
+        {...baseProps}
+        playlistTracks={playlistTracks}
+        searchResults={{ items: makeTracks(2), total: 2 }}
+      />,
+    );
+    // The first track should show as added (aria-pressed true or checkmark)
+    const addedButton = screen.getByRole("button", {
+      name: /Added to playlist/i,
+    });
+    expect(addedButton).toBeInTheDocument();
+    expect(addedButton).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("renders correctly with a single search result", () => {
+    render(
+      <SearchResults
+        {...baseProps}
+        searchResults={{ items: makeTracks(1), total: 1 }}
+      />,
+    );
+    expect(screen.getByText("Track 1")).toBeInTheDocument();
+    expect(screen.getByText(/Showing 1–1 of 1 results/i)).toBeInTheDocument();
+  });
+
+  it("renders correctly with a large number of results", () => {
+    render(
+      <SearchResults
+        {...baseProps}
+        searchResults={{ items: makeTracks(100), total: 100 }}
+      />,
+    );
+    expect(screen.getByText("Track 100")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing 1–10 of 100 results/i),
+    ).toBeInTheDocument();
+  });
+
+  it("renders error message if error prop is provided", () => {
+    render(
+      <SearchResults
+        {...baseProps}
+        error="Something went wrong"
+        searchResults={{ items: [], total: 0 }}
+      />,
+    );
+    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+  });
 });

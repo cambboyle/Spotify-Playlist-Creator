@@ -8,6 +8,7 @@ const SearchResults = ({
   onAdd,
   playlistTracks,
   isLoading,
+  error,
 }) => {
   // searchResults: { items, total }
   const [shown, setShown] = useState(10);
@@ -37,6 +38,15 @@ const SearchResults = ({
   return (
     <div className="SearchContainer">
       <h2>Results</h2>
+      {error && (
+        <div
+          className="SearchResults-error"
+          role="alert"
+          style={{ color: "var(--color-error, #c00)", marginBottom: "1em" }}
+        >
+          {error}
+        </div>
+      )}
       <div className="SearchResults-show" style={{ marginBottom: "0.5em" }}>
         <button
           className={`button-secondary${shown === 10 ? " button-disabled" : ""}`}
