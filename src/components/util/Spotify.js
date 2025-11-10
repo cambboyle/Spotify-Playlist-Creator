@@ -1,10 +1,17 @@
-const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || "";
+const env =
+  typeof import.meta !== "undefined" && import.meta.env
+    ? import.meta.env
+    : typeof process !== "undefined" && process.env
+      ? process.env
+      : {};
+
+const clientId = env.VITE_SPOTIFY_CLIENT_ID || "";
 // Allow overriding redirect URI via environment variable for cases where
 // Spotify no longer allows localhost redirects. Set VITE_SPOTIFY_REDIRECT_URI
 // in your .env to a secure (https) public URL provided by a tunneling service
 // such as ngrok, localtunnel, or Cloudflare Tunnel.
 const redirectUri =
-  import.meta.env.VITE_SPOTIFY_REDIRECT_URI ||
+  env.VITE_SPOTIFY_REDIRECT_URI ||
   (typeof window !== "undefined"
     ? `${window.location.origin}/`
     : "http://localhost:3000/");
@@ -676,3 +683,13 @@ const Spotify = {
 };
 
 export default Spotify;
+
+// Always export PKCE helpers for testability (safe for production)
+export {
+  base64UrlEncode,
+  sha256,
+  generateCodeVerifier,
+  generateCodeChallenge,
+  exchangeCodeForToken,
+  refreshAccessToken,
+};
