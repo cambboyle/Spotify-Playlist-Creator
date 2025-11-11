@@ -51,7 +51,7 @@ describe("PKCE/OAuth helpers", () => {
     let challenge;
     try {
       challenge = await generateCodeChallenge("testverifier");
-    } catch (e) {
+    } catch {
       // skip test if crypto.subtle.digest is not available
       return;
     }
@@ -159,14 +159,20 @@ describe("Spotify utility module", () => {
 
     it("authorize throws if clientId is missing", async () => {
       // Patch env to simulate missing clientId
-      const origEnv = process.env.VITE_SPOTIFY_CLIENT_ID;
-      process.env.VITE_SPOTIFY_CLIENT_ID = "";
+      // Patch env to simulate missing clientId
+      let origEnv;
+      if (typeof process !== "undefined") {
+        origEnv = process.env.VITE_SPOTIFY_CLIENT_ID;
+        process.env.VITE_SPOTIFY_CLIENT_ID = "";
+      }
       vi.resetModules();
       const { default: spotifyNoClient } = await import("../Spotify.js");
       await expect(spotifyNoClient.authorize()).rejects.toThrow(
         "VITE_SPOTIFY_CLIENT_ID is not set",
       );
-      process.env.VITE_SPOTIFY_CLIENT_ID = origEnv;
+      if (typeof process !== "undefined") {
+        process.env.VITE_SPOTIFY_CLIENT_ID = origEnv;
+      }
     });
 
     it("logout clears all tokens and sessionStorage", () => {
@@ -309,10 +315,6 @@ describe("Spotify utility module", () => {
     });
 
     it("calls onProgress callback", async () => {
-      const fetchWithRetryMock = vi
-        .fn()
-        .mockResolvedValueOnce({ ok: true, json: async () => ({ id: "id" }) })
-        .mockResolvedValue({ ok: true });
       const onProgress = vi.fn();
       Spotify.fetchWithRetry = vi
         .fn()
