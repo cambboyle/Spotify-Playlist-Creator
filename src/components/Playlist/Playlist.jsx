@@ -58,7 +58,14 @@ const Playlist = (props) => {
 
   return (
     <div className="Playlist">
+      <label
+        htmlFor="playlist-name-input"
+        style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}
+      >
+        Playlist Name
+      </label>
       <input
+        id="playlist-name-input"
         className="input-primary"
         value={props.playlistName}
         onChange={handleNameChange}
@@ -74,6 +81,7 @@ const Playlist = (props) => {
         }}
         onFocus={(e) => (e.target.style.border = "2px solid var(--accent)")}
         onBlur={(e) => (e.target.style.border = "1px solid var(--accent)")}
+        aria-label="Playlist Name"
       />
 
       <div className="Playlist-pagination" style={{ marginBottom: "0.5rem" }}>
