@@ -25,8 +25,13 @@ export default function PlaylistList({ onSelect }) {
       setPlaylists(writable);
       window.sessionStorage.setItem(CACHE_KEY, JSON.stringify(writable));
     } catch (err) {
-      console.error("Failed to load user playlists", err);
-      setError("Failed to load playlists");
+      if (err && err.message && err.message.includes("Not authorized")) {
+        setError("You are not authorized. Please connect to Spotify.");
+        // Optionally, trigger an authorize flow or show a button here
+      } else {
+        console.error("Failed to load user playlists", err);
+        setError("Failed to load playlists");
+      }
     } finally {
       setLoading(false);
     }
