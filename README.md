@@ -16,6 +16,7 @@ Crate is a modern, accessible React + Vite application for searching Spotify tra
 - **Responsive & Accessible:** Works great on desktop and mobile, with full keyboard navigation.
 - **Robust Testing:** 80%+ coverage with Vitest and Testing Library; CI-ready.
 - **Professional Documentation:** Clear roadmap, manual QA checklist, and coverage badge.
+- **Optimized Font Loading:** Inter font is self-hosted and preloaded for best performance.
 
 ---
 
@@ -38,6 +39,23 @@ npm install
 ### 3. Configure Environment Variables
 
 Create a `.env` file in the project root:
+
+---
+
+## Performance Optimization: Font Loading
+
+Crate self-hosts the Inter font and preloads it in the HTML head.  
+**Why?**  
+- Eliminates render-blocking requests to Google Fonts, improving First Contentful Paint (FCP) and Largest Contentful Paint (LCP).
+- Ensures text is visible immediately (`font-display: swap`), reducing layout shift and improving user experience.
+- Reduces reliance on third-party services for critical assets.
+
+**How it works:**  
+- Inter.woff2 is served from `/fonts/Inter.woff2`.
+- `<link rel="preload" href="/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>` is added to the HTML head.
+- CSS uses `font-display: swap` for fast, reliable rendering.
+
+This optimization is recommended by Lighthouse and modern web performance guides, and demonstrates a commitment to professional, user-focused engineering.
 
 ```properties
 VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
