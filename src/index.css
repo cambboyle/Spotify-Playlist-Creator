@@ -1,45 +1,44 @@
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter.var.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
+    font-family: "Inter";
+    src: url("/fonts/Inter.var.woff2") format("woff2-variations");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+    font-family: "Inter";
+    src: url("/fonts/Inter-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Black.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
+    font-family: "Inter";
+    src: url("/fonts/Inter-Black.woff2") format("woff2");
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
 }
-
 
 :root {
     /* New palette based on provided hex codes and 60-30-10 rule */
-    --color-background: #fef6e4;      /* Off-white, 60% */
-    --color-headline: #001858;        /* Deep navy */
-    --color-paragraph: #172c66;       /* Slightly lighter navy */
-    --color-button: #f582ae;          /* Pink accent */
-    --color-button-text: #001858;     /* Navy for button text */
-    --color-stroke: #001858;          /* Navy for strokes/borders */
-    --color-secondary: #8bd3dd;       /* Light blue, 30% */
-    --color-main: #f3d2c1;            /* Peach */
-    --color-tertiary: #f582ae;        /* Pink accent */
-    --color-highlight: #fef6e4;       /* Off-white highlight */
-    --color-card-bg: #f3d2c1;         /* Peach for cards/containers */
-    --color-card-alt: #8bd3dd;        /* Light blue for alt containers */
-    --color-error: #f582ae;           /* Pink for errors */
-    --color-success: #8bd3dd;         /* Light blue for success */
-    --color-button-hover: #e06c9f;    /* Slightly darker pink for button hover */
+    --color-background: #fef6e4; /* Off-white, 60% */
+    --color-headline: #001858; /* Deep navy */
+    --color-paragraph: #172c66; /* Slightly lighter navy */
+    --color-button: #f582ae; /* Pink accent */
+    --color-button-text: #001858; /* Navy for button text */
+    --color-stroke: #001858; /* Navy for strokes/borders */
+    --color-secondary: #8bd3dd; /* Light blue, 30% */
+    --color-main: #f3d2c1; /* Peach */
+    --color-tertiary: #f582ae; /* Pink accent */
+    --color-highlight: #fef6e4; /* Off-white highlight */
+    --color-card-bg: #f3d2c1; /* Peach for cards/containers */
+    --color-card-alt: #8bd3dd; /* Light blue for alt containers */
+    --color-error: #f582ae; /* Pink for errors */
+    --color-success: #8bd3dd; /* Light blue for success */
+    --color-button-hover: #e06c9f; /* Slightly darker pink for button hover */
 }
 
 /* SearchContainer styles */
@@ -136,7 +135,7 @@
     margin: 0 0 18px 0;
     letter-spacing: 2px;
     text-shadow: none;
-    font-family: 'Inter', 'Nunito', Arial, sans-serif;
+    font-family: "Inter", "Nunito", Arial, sans-serif;
     line-height: 1.1;
 }
 
@@ -172,12 +171,14 @@
     border: 2px solid var(--color-stroke);
     padding: 24px 24px;
     box-shadow: 0 2px 8px rgba(245, 130, 174, 0.04);
-    transition: box-shadow 0.22s, border-color 0.22s;
+    transition:
+        box-shadow 0.22s,
+        border-color 0.22s;
 }
 
 .AppSection:hover,
 .AppSection:focus-within {
-    box-shadow: 0 6px 32px rgba(245, 130, 174, 0.10);
+    box-shadow: 0 6px 32px rgba(245, 130, 174, 0.1);
     border-color: var(--color-button);
 }
 
@@ -187,7 +188,7 @@
     margin-bottom: 28px;
     font-weight: 800;
     letter-spacing: 1px;
-    font-family: 'Inter', 'Nunito', Arial, sans-serif;
+    font-family: "Inter", "Nunito", Arial, sans-serif;
     line-height: 1.15;
 }
 
@@ -417,11 +418,15 @@ button,
 button,
 .button-primary,
 .button-secondary {
-    font-family: 'Inter', 'Nunito', Arial, sans-serif;
+    font-family: "Inter", "Nunito", Arial, sans-serif;
     font-weight: 700;
     font-size: 1.08rem;
     border-radius: 24px;
-    transition: background 0.22s, color 0.22s, box-shadow 0.22s, transform 0.18s;
+    transition:
+        background 0.22s,
+        color 0.22s,
+        box-shadow 0.22s,
+        transform 0.18s;
     box-shadow: 0 2px 8px rgba(245, 130, 174, 0.04);
     padding: 12px 28px;
     margin: 6px 2px;
@@ -461,13 +466,15 @@ button:disabled,
     opacity: 0.7;
 }
 
-button:disabled, .button-primary:disabled {
+button:disabled,
+.button-primary:disabled {
     .button-disabled {
         background: var(--color-main);
         color: var(--color-paragraph);
         cursor: not-allowed;
         border: 2px solid var(--color-stroke);
     }
+}
 
 /* Card styles */
 .card {
@@ -512,12 +519,14 @@ input[type="email"] {
     border-radius: 20px;
     padding: 12px;
     font-size: 1.08rem;
-    font-family: 'Inter', 'Nunito', Arial, sans-serif;
+    font-family: "Inter", "Nunito", Arial, sans-serif;
     font-weight: 600;
     margin-bottom: 0;
     box-shadow: none;
     outline: none;
-    transition: border-color 0.22s, background 0.22s;
+    transition:
+        border-color 0.22s,
+        background 0.22s;
 }
 
 input:focus {
@@ -643,12 +652,14 @@ input:focus {
     margin-bottom: 32px;
     color: var(--color-headline);
     border: 2px solid var(--color-stroke);
-    transition: box-shadow 0.22s, border-color 0.22s;
+    transition:
+        box-shadow 0.22s,
+        border-color 0.22s;
 }
 
 .card:hover,
 .card:focus-within {
-    box-shadow: 0 4px 24px rgba(245, 130, 174, 0.10);
+    box-shadow: 0 4px 24px rgba(245, 130, 174, 0.1);
     border-color: var(--color-button);
 }
 
