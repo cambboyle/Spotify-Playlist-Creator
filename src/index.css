@@ -32,6 +32,8 @@
     --color-stroke: #001858; /* Navy for strokes/borders */
     --color-secondary: #8bd3dd; /* Light blue, 30% */
     --color-main: #f3d2c1; /* Peach */
+    --color-main-text: #172c66; /* Navy for text on peach */
+    --color-secondary-text: #172c66; /* Navy for text on blue */
     --color-tertiary: #f582ae; /* Pink accent */
     --color-highlight: #fef6e4; /* Off-white highlight */
     --color-card-bg: #f3d2c1; /* Peach for cards/containers */
@@ -85,7 +87,7 @@
     border-radius: 8px;
     padding: 12px 16px;
     background: var(--color-card-bg);
-    color: var(--color-button-text);
+    color: var(--color-main-text);
 }
 
 .SearchBar-button {

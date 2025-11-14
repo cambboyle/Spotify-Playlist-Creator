@@ -70,7 +70,7 @@ const Playlist = (props) => {
         value={props.playlistName}
         onChange={handleNameChange}
         style={{
-          background: "var(--gray-100)",
+          background: "var(--color-card-alt)",
           color: "var(--gray-900)",
           border: "1px solid var(--accent)",
           borderRadius: "6px",
