@@ -320,24 +320,27 @@ function App() {
       </header>
       <main className="AppMain">
         <section className="AppSection AppSection--search">
-          <SearchBar onSearch={search} />
-        </section>
-        {error && (
-          <div className="App-error" role="alert">
-            {error}
+          <div className="SearchSection">
+            <div className="AppSection-searchBar">
+              <SearchBar onSearch={search} />
+            </div>
+            {error && (
+              <div className="App-error" role="alert">
+                {error}
+              </div>
+            )}
+            <div className="AppSection-searchResults">
+              <h2 className="AppSection-title">Search Results</h2>
+              <SearchResults
+                searchTerm={searchTerm}
+                onSearch={search}
+                searchResults={searchResults}
+                onAdd={addTrack}
+                playlistTracks={playlistTracks}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
-        )}
-
-        <section className="AppSection AppSection--results">
-          <h2 className="AppSection-title">Search Results</h2>
-          <SearchResults
-            searchTerm={searchTerm}
-            onSearch={search}
-            searchResults={searchResults}
-            onAdd={addTrack}
-            playlistTracks={playlistTracks}
-            isLoading={isLoading}
-          />
         </section>
         <section className="AppSection AppSection--playlist">
           <div className="App-playlistGrid">

@@ -55,6 +55,31 @@
     align-items: stretch;
 }
 
+.SearchSection {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.AppSection-searchBar,
+.AppSection-searchResults {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .SearchSection {
+        gap: 16px;
+    }
+
+    .AppSection-searchBar,
+    .AppSection-searchResults {
+        gap: 12px;
+    }
+}
+
 /* SearchBar styles */
 .SearchBar-container {
     background: var(--color-card-bg);
@@ -311,6 +336,16 @@
     margin-left: auto;
     flex-shrink: 0;
     align-self: center;
+}
+
+.App-error {
+    border: 2px solid var(--color-error);
+    background: var(--color-main);
+    color: var(--color-error);
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
 }
 
 .AppFooter {
