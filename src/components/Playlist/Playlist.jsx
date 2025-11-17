@@ -73,7 +73,7 @@ const Playlist = (props) => {
           background: "var(--color-card-alt)",
           color: "var(--gray-900)",
           border: "1px solid var(--accent)",
-          borderRadius: "6px",
+          borderRadius: "26px",
           padding: "8px",
           fontSize: "1rem",
           marginBottom: "8px",

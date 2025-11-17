@@ -153,7 +153,6 @@ export default function PlaylistList({ onSelect }) {
             aria-label="Playlist list"
             tabIndex={0}
             style={{
-              background: "var(--gray-200)",
               borderRadius: "8px",
               padding: "8px 0",
             }}

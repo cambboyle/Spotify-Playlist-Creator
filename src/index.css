@@ -544,11 +544,9 @@ input:focus {
 
 /* Playlist list and items */
 .PlaylistList {
-    background: var(--gray-200);
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .PlaylistListItem button {
