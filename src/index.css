@@ -100,7 +100,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0;
+    gap: 12px;
     width: 100%;
 }
 
@@ -124,11 +124,18 @@
     .SearchBar-form {
         max-width: 100%;
     }
+    .SearchBar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
     .SearchBar-input {
-        margin-right: 8px;
+        margin-right: 0;
+        width: 100%;
     }
     .SearchBar-button {
-        min-width: 90px;
+        width: 100%;
+        min-width: 0;
         padding: 10px 12px;
     }
 }
@@ -146,20 +153,36 @@
     width: 100%;
     background: var(--color-background);
     box-shadow: none;
-    padding: 40px 0 24px 0;
+    padding: 32px 16px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 24px;
+    align-items: stretch;
     border-bottom: 2px solid var(--color-stroke);
     position: relative;
     z-index: 10;
+    align-items: center;
+    text-align: center;
+}
+
+.AppHeader-left,
+.AppHeader-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.AppHeader-right {
+    justify-content: flex-start;
 }
 
 .AppHeader h1 {
     font-size: 3rem;
     font-weight: 900;
     color: var(--color-headline);
-    margin: 0 0 18px 0;
+    margin: 0;
     letter-spacing: 2px;
     text-shadow: none;
     font-family: "Inter", "Nunito", Arial, sans-serif;
@@ -167,18 +190,37 @@
 }
 
 .AppHeader-user {
-    margin-top: 8px;
+    margin-top: 0;
     color: var(--color-paragraph);
     font-size: 1rem;
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 0 16px;
+    padding: 0;
 }
 
 .AppHeader-userName {
     font-weight: bold;
     color: var(--color-headline);
+}
+
+@media (min-width: 720px) {
+    .AppHeader {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 32px 16px;
+        gap: 24px;
+    }
+
+    .AppHeader-right {
+        justify-content: flex-end;
+        gap: 16px;
+    }
+
+    .AppHeader h1 {
+        font-size: 3rem;
+    }
 }
 
 .AppMain {
@@ -238,15 +280,24 @@
 .TrackTest,
 .Tracklist {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 24px;
     width: 100%;
-    max-width: 100%;
     margin: 0 auto;
     margin-top: 32px;
     margin-bottom: 16px;
     padding: 0;
     box-sizing: border-box;
+}
+
+.TrackTest {
+    grid-template-columns: 1fr 1fr;
+    max-width: 100%;
+}
+
+.Tracklist {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    list-style: none;
+    max-width: 900px;
 }
 
 @media (max-width: 900px) {
@@ -255,6 +306,22 @@
         grid-template-columns: 1fr;
         gap: 16px;
     }
+}
+
+.Tracklist-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    padding: 24px 20px;
+    border: 2px solid var(--color-stroke);
+    border-radius: 18px;
+    background: var(--color-card-bg);
+    box-shadow: 0 2px 8px rgba(245, 130, 174, 0.04);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 /* Search Results Grid */
@@ -336,6 +403,44 @@
     margin-left: auto;
     flex-shrink: 0;
     align-self: center;
+}
+
+.SearchResults-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.SearchResults-show,
+.SearchResults-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.SearchResults-pagination button,
+.SearchResults-show button {
+    flex-shrink: 0;
+}
+
+.SearchResults-count,
+.SearchResults-page {
+    min-width: max-content;
+}
+
+@media (max-width: 600px) {
+    .SearchResults-show,
+    .SearchResults-pagination {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .SearchResults-count,
+    .SearchResults-page {
+        text-align: left;
+        width: 100%;
+    }
 }
 
 .App-error {
@@ -707,9 +812,25 @@ input:focus {
     padding: 0 8px;
 }
 
+.PlaylistTracklist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.PlaylistTracklist-heading {
+    font-weight: 700;
+    color: var(--color-button);
+    letter-spacing: 0.5px;
+}
+
 .PlaylistTracklist-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     background: var(--gray-200);
     border-radius: 6px;
     border: 1px solid var(--gray-400);
@@ -769,6 +890,42 @@ input:focus {
     flex-shrink: 0;
     align-self: center;
     margin-right: 4px;
+}
+
+.Playlist-pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.Playlist-pagination > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.Playlist-pagination select {
+    min-width: 90px;
+}
+
+@media (max-width: 600px) {
+    .Playlist-pagination > div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .Playlist-pagination span {
+        width: 100%;
+    }
+
+    .PlaylistTracklist-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
 }
 
 /* Responsive adjustments */

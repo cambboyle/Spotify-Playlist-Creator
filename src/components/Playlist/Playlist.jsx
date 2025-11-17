@@ -84,8 +84,8 @@ const Playlist = (props) => {
         aria-label="Playlist Name"
       />
 
-      <div className="Playlist-pagination" style={{ marginBottom: "0.5rem" }}>
-        <div style={{ marginBottom: "0.25rem" }}>
+      <div className="Playlist-pagination">
+        <div>
           <button
             className="button-secondary"
             disabled={page <= 1}
@@ -100,7 +100,7 @@ const Playlist = (props) => {
           >
             Prev
           </button>
-          <span style={{ margin: "0 0.5rem" }}>
+          <span>
             Page {page} of {lastPage}
           </span>
           <button
@@ -133,7 +133,7 @@ const Playlist = (props) => {
             <option value={50}>50</option>
             <option value={100}>100</option>
           </select>
-          <span style={{ marginLeft: "1rem" }}>
+          <span>
             {total === 0
               ? "No tracks"
               : `Showing ${startIdx}–${endIdx} of ${total} tracks`}
@@ -141,22 +141,8 @@ const Playlist = (props) => {
         </div>
       </div>
 
-      <div
-        className="PlaylistTracklist-header"
-        style={{
-          marginBottom: "12px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontWeight: "bold",
-            color: "var(--accent)",
-            fontSize: "1.1rem",
-          }}
-        >
+      <div className="PlaylistTracklist-header">
+        <span className="PlaylistTracklist-heading">
           Tracks in Playlist ({displayedTracks.length})
         </span>
       </div>

@@ -248,30 +248,11 @@ function App() {
 
   return (
     <div className="AppLayout">
-      <header
-        className="AppHeader"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 32px",
-        }}
-      >
-        <div
-          className="AppHeader-left"
-          style={{ display: "flex", alignItems: "center" }}
-        >
-          <h1 style={{ marginTop: "25px" }}>Crate</h1>
+      <header className="AppHeader">
+        <div className="AppHeader-left">
+          <h1>Crate</h1>
         </div>
-        <div
-          className="AppHeader-right"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "25px",
-            gap: "18px",
-          }}
-        >
+        <div className="AppHeader-right">
           {isConnected ? (
             <>
               {Spotify.profile &&
