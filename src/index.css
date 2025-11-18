@@ -275,6 +275,7 @@
     border: 2px solid var(--color-stroke);
     padding: 32px 24px 24px 24px;
     margin-bottom: 0;
+    color: var(--color-headline);
 }
 
 .TrackTest,
@@ -823,7 +824,7 @@ input:focus {
 
 .PlaylistTracklist-heading {
     font-weight: 700;
-    color: var(--color-button);
+    color: var(--color-headline);
     letter-spacing: 0.5px;
 }
 
