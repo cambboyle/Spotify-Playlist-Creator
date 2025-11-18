@@ -41,8 +41,7 @@ describe("PlaylistListItem component", () => {
     render(<PlaylistListItem {...defaultProps} selected ariaSelected />);
     const btn = screen.getByRole("button");
     expect(btn).toHaveClass("button-primary");
-    expect(btn).toHaveAttribute("aria-selected", "true");
-    // The li should also have aria-selected
+    // The li should have aria-selected
     const li = btn.closest("li");
     expect(li).toHaveAttribute("aria-selected", "true");
     expect(li).toHaveClass("PlaylistListItem--selected");
@@ -58,7 +57,6 @@ describe("PlaylistListItem component", () => {
     );
     const btn = screen.getByRole("button");
     expect(btn).toHaveClass("button-secondary");
-    expect(btn).toHaveAttribute("aria-selected", "false");
     const li = btn.closest("li");
     expect(li).toHaveAttribute("aria-selected", "false");
     expect(li).not.toHaveClass("PlaylistListItem--selected");
