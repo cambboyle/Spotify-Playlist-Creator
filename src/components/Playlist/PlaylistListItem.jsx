@@ -28,7 +28,6 @@ export default function PlaylistListItem({
           boxShadow: selected ? "0 0 0 2px var(--accent)" : "none",
           transition: "background 0.2s, color 0.2s, outline 0.2s",
         }}
-        aria-selected={selected}
       >
         {name} {typeof trackCount === "number" ? `(${trackCount}) Tracks` : ""}
       </button>
