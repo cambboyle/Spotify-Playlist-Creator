@@ -575,6 +575,12 @@ button,
     margin: 6px 2px;
     background: var(--color-button);
     color: var(--color-button-text);
+    /* Ensure minimum touch target size for accessibility */
+    min-width: 48px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 button:hover,
