@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * PlaylistListItem
+ * - Renders a playlist item for the listbox.
+ * - ARIA: aria-selected is only on the <li role="option"> for accessibility.
+ * - Touch target and color contrast handled via CSS.
+ */
 export default function PlaylistListItem({
   id,
   name,
@@ -19,6 +25,7 @@ export default function PlaylistListItem({
         type="button"
         className={`PlaylistListItem-btn ${selected ? "button-primary" : "button-secondary"}`}
         onClick={() => onSelect && onSelect(id)}
+        tabIndex={tabIndex}
         style={{
           background: selected ? "var(--accent)" : "transparent",
           color: selected ? "var(--gray-100)" : "var(--gray-900)",

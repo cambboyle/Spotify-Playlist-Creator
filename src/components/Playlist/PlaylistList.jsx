@@ -150,7 +150,7 @@ export default function PlaylistList({ onSelect }) {
           <ul
             ref={listRef}
             role="listbox"
-            aria-label="Playlist list"
+            aria-label="Your playlists"
             tabIndex={0}
             style={{
               borderRadius: "8px",
@@ -164,7 +164,6 @@ export default function PlaylistList({ onSelect }) {
                 let nextIdx = currentIdx + 1;
                 if (nextIdx >= visible.length) nextIdx = 0;
                 setSelectedId(visible[nextIdx].id);
-                // Focus the button for accessibility
                 setTimeout(() => {
                   const btn =
                     listRef.current.querySelectorAll("button")[nextIdx];
@@ -210,7 +209,7 @@ export default function PlaylistList({ onSelect }) {
                 name={p.name}
                 trackCount={p.trackCount}
                 selected={selectedId === p.id}
-                aria-selected={selectedId === p.id}
+                ariaSelected={selectedId === p.id}
                 tabIndex={selectedId === p.id ? 0 : -1}
                 onSelect={(id) => {
                   setSelectedId(id);
